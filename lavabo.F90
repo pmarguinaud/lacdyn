@@ -1,0 +1,240 @@
+SUBROUTINE LAVABO(KST,KPROF,LD2TLFF1,PB1)
+
+!**** *LAVABO*   Semi-Lagrangian scheme.
+!                VAlues at the BOundaries: Upper and lower extrapolations.
+
+!     Purpose.
+!     --------
+!          This subroutine do upper and lower extrapolations of
+!          semi-lagrangian quantities for extra-levels JLEV=0
+!          and JLEV=NFLEVG+1.
+!          Abbreviation "vwv" stands for "vertical wind variable".
+
+!**   Interface.
+!     ----------
+!        *CALL* *LAVABO(......)
+
+!        Explicit arguments :
+!        --------------------
+
+!        INPUT:
+!          KST      : first element of work.
+!          KPROF    : depth of work.
+!          LD2TLFF1 : .T./.F.: Refined treatement of (2*Omega Vec r) at
+!                    the origin point when there is t-dt (or t in SL2TL)
+!                    physics / Other cases.
+
+!        INPUT/OUTPUT:
+!          PB1      : "SLBUF1" buffer for interpolations.
+
+!        Implicit arguments :
+!        --------------------
+
+!     Method.
+!     -------
+!        See documentation
+
+!     Externals.
+!     ----------
+!         None
+!         Called by LACDYN.
+
+!     Reference.
+!     ----------
+!         Arpege documentation Part I  Chapter 3
+!                              Part II Chapter 5 and 6
+!         Documentation about semi-Lagrangian scheme.
+
+!     Author.
+!     -------
+!      K. YESSAD (METEO FRANCE/CNRM/GMAP) after routine
+!        CPLGDY1 coded by Maurice IMBARD.
+!      Original : APRIL 1992.
+
+! Modifications
+! -------------
+!   Modified 01-06-22 by K. YESSAD:
+!    - relaxation of thin layer hypothesis.
+!   Modified 01-08-30 by K. YESSAD: pruning and some other cleanings.
+!   R. El Khatib : 01-08-07 Pruning options
+!   03 - 2002 J.Vivoda PC schemes for NH dynamics (LPC_XXXX keys)
+!   Modified 08-2002 C. Smith : use "w" as prognostic variable in the
+!    semi-lag advection of vertical divergence in the NH model.
+!   Modified 2003-03-16 M.Hamrud/M.Hortal - Revised data flow (GFL)
+!   01-Oct-2003 M. Hamrud  CY28 Cleaning
+!   10-Jun-2004 J. Masek   NH cleaning (LPC_NOTR)
+!   Modified 2004-Nov by F. Vana: update of YCOMP%CSLINT
+!   N. Wedi and K. Yessad (Jan 2008): different dev for NH model and PC scheme
+!   K. Yessad Aug 2008: rationalisation of dummy argument interfaces
+!   F. Vana   15-Oct-2009 : option NSPLTHOI
+!   K. Yessad (Nov 2009): prune lpc_old.
+!   F. Vana   15-Oct-2009 : diffusion of phys. tendencies (NSPLTHOI=1)
+!   K. Yessad (July 2014): Rename some variables.
+! End Modifications
+!------------------------------------------------------------------------------
+
+USE PARKIND1 , ONLY : JPIM, JPRB
+
+USE YOMCT0   , ONLY : LNHDYN, LSLPHY
+USE YOMDIM   , ONLY : YRDIM
+USE YOMDIMV  , ONLY : YRDIMV
+USE YOMDYNA  , ONLY : LVERCOR, LRWSDLR, LRWSDLW, NVDVAR, LSLINL, LSLINLC1, LSLINLC2
+USE YOMDYN   , ONLY : YRDYN
+USE PTRSLB1  , ONLY : YRPTRSLB1
+USE YOM_YGFL , ONLY : YGFL
+
+!     ------------------------------------------------------------------
+
+IMPLICIT NONE
+
+INTEGER(KIND=JPIM),INTENT(IN)    :: KST 
+INTEGER(KIND=JPIM),INTENT(IN)    :: KPROF 
+LOGICAL           ,INTENT(IN)    :: LD2TLFF1 
+REAL(KIND=JPRB)   ,INTENT(INOUT) :: PB1(YRDIM%NPROMA,YRPTRSLB1%NFLDSLB1)
+
+!     ------------------------------------------------------------------
+
+INTEGER(KIND=JPIM) :: JGFL, ISLB1GFL9, ISLB1GFLP9
+
+
+!     ------------------------------------------------------------------
+
+
+
+
+!     ------------------------------------------------------------------
+
+!*       1.    UPPER AND LOWER LATERAL BOUNDARIES CONDITIONS SET TO 0.
+!              --------------------------------------------------------
+
+! * P[X]RL0 and P[X]RL9 for [X]=U,V,W:
+PB1(KST:KPROF,YRPTRSLB1%MSLB1UR0)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1UR0+YRDIMV%NFLEVG+1)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1VR0)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1VR0+YRDIMV%NFLEVG+1)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1WR0)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1WR0+YRDIMV%NFLEVG+1)=0.0_JPRB
+IF (LD2TLFF1) THEN
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1UR9)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1UR9+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VR9)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VR9+YRDIMV%NFLEVG+1)=0.0_JPRB
+ENDIF
+
+! * P[X]L0 and P[X]L9 for [X]=U,V,T,advected GFL:
+PB1(KST:KPROF,YRPTRSLB1%MSLB1U9)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1U9+YRDIMV%NFLEVG+1)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1V9)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1V9+YRDIMV%NFLEVG+1)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1T9)=0.0_JPRB
+PB1(KST:KPROF,YRPTRSLB1%MSLB1T9+YRDIMV%NFLEVG+1)=0.0_JPRB
+DO JGFL=1,YGFL%NUMFLDS
+  IF( (YGFL%YCOMP(JGFL)%CSLINT /= 'LAITVSPCQM  ').AND.YGFL%YCOMP(JGFL)%LADV ) THEN
+    ISLB1GFL9=YRPTRSLB1%MSLB1GFL9+(YGFL%YCOMP(JGFL)%MP_SL1-1)*(YRDIMV%NFLEN-YRDIMV%NFLSA+1)
+    PB1(KST:KPROF,ISLB1GFL9)=0.0_JPRB
+    PB1(KST:KPROF,ISLB1GFL9+YRDIMV%NFLEVG+1)=0.0_JPRB
+  ENDIF
+ENDDO
+IF (YRDYN%NSPLTHOI /= 0) THEN
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1UF9)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1UF9+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VF9)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VF9+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1TF9)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1TF9+YRDIMV%NFLEVG+1)=0.0_JPRB
+ENDIF
+IF (YRDYN%NSPLTHOI /= 0.OR.YRDYN%LSPLTHOIGFL) THEN
+  DO JGFL=1,YGFL%NUMFLDS
+    IF( (YGFL%YCOMP(JGFL)%CSLINT /= 'LAITVSPCQM  ').AND.YGFL%YCOMP(JGFL)%LADV ) THEN
+      ISLB1GFL9=YRPTRSLB1%MSLB1GFLF9+(YGFL%YCOMP(JGFL)%MP_SL1-1)*(YRDIMV%NFLEN-YRDIMV%NFLSA+1)
+      PB1(KST:KPROF,ISLB1GFL9)=0.0_JPRB
+      PB1(KST:KPROF,ISLB1GFL9+YRDIMV%NFLEVG+1)=0.0_JPRB
+    ENDIF
+  ENDDO
+ENDIF
+
+IF (YRDYN%NWLAG /= 2) THEN
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1U0)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1U0+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1V0)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1V0+YRDIMV%NFLEVG+1)=0.0_JPRB
+ENDIF
+IF (YRDYN%NTLAG /= 2) THEN
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1T0)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1T0+YRDIMV%NFLEVG+1)=0.0_JPRB
+ENDIF
+
+! * P[X]L0 and P[X]L9 for [X]=SPD,VWV,NHX:
+IF (LNHDYN) THEN
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VD9) = 0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VD9+YRDIMV%NFLEVG+1) = 0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1PD9) = 0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1PD9+YRDIMV%NFLEVG+1) = 0.0_JPRB
+  IF (YRDYN%NSPLTHOI /= 0) THEN
+    PB1(KST:KPROF,YRPTRSLB1%MSLB1VDF9) = 0.0_JPRB
+    PB1(KST:KPROF,YRPTRSLB1%MSLB1VDF9+YRDIMV%NFLEVG+1) = 0.0_JPRB
+  ENDIF
+  IF (NVDVAR == 4) THEN
+    PB1(KST:KPROF,YRPTRSLB1%MSLB1NHX9) = 0.0_JPRB
+    PB1(KST:KPROF,YRPTRSLB1%MSLB1NHX9+YRDIMV%NFLEVG+1) = 0.0_JPRB
+  ENDIF
+  IF (YRDYN%NSVDLAG /= 2) THEN
+    PB1(KST:KPROF,YRPTRSLB1%MSLB1VD0) = 0.0_JPRB
+    PB1(KST:KPROF,YRPTRSLB1%MSLB1VD0+YRDIMV%NFLEVG+1) = 0.0_JPRB
+  ENDIF
+  IF (YRDYN%NSPDLAG /= 2) THEN
+    PB1(KST:KPROF,YRPTRSLB1%MSLB1PD0) = 0.0_JPRB
+    PB1(KST:KPROF,YRPTRSLB1%MSLB1PD0+YRDIMV%NFLEVG+1) = 0.0_JPRB
+  ENDIF
+ENDIF
+
+! * P[X]L0 and P[X]L9 for [X]=C (continuity equation):
+IF (YRDYN%NVLAG == 2.OR.YRDYN%NVLAG == 3) THEN
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1C9)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1C9+YRDIMV%NFLEVG+1)=0.0_JPRB
+  IF (LSLINLC1.OR.LSLINLC2) PB1(KST:KPROF,YRPTRSLB1%MSLB1C9_SI)=0.0_JPRB
+  IF (LSLINLC1.OR.LSLINLC2) PB1(KST:KPROF,YRPTRSLB1%MSLB1C9_SI+YRDIMV%NFLEVG+1)=0.0_JPRB
+ENDIF
+
+! * P[X]LP9 for [X]=U,V,T,advected GFL:
+IF( LSLPHY ) THEN
+  ! ky: it seems to miss the zeroing of the bottom condition;
+  !     is it JGFL or YCOMP(JGFL)%MP_SL1 in ISLB1GFLP9?
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1UP9+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VP9+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1TP9+YRDIMV%NFLEVG+1)=0.0_JPRB
+  DO JGFL=1,YGFL%NUMFLDS
+    IF(YGFL%YCOMP(JGFL)%LADV) THEN
+      ISLB1GFLP9=YRPTRSLB1%MSLB1GFLP9+(JGFL-1)*(YRDIMV%NFLEN-YRDIMV%NFLSA+1)
+      PB1(KST:KPROF,ISLB1GFLP9+YRDIMV%NFLEVG+1)=0.0_JPRB
+    ENDIF
+  ENDDO
+ENDIF
+
+! * P[X]L9 for [X]=VCRSSA:
+IF ((LVERCOR.OR.(LRWSDLW.AND.LRWSDLR)).AND.YRDYN%LADVFW) THEN
+  ! * need to interpolate "rs/a" (instant t-dt or t according to "ltwotl") at O.
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1RSSA9)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1RSSA9+YRDIMV%NFLEVG+1)=0.0_JPRB
+ENDIF
+
+! * P[X]L9_SI (GMV equations):
+IF (LSLINL) THEN
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1U9_SI)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1U9_SI+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1V9_SI)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1V9_SI+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1T9_SI)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1T9_SI+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1PD9_SI)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1PD9_SI+YRDIMV%NFLEVG+1)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VD9_SI)=0.0_JPRB
+  PB1(KST:KPROF,YRPTRSLB1%MSLB1VD9_SI+YRDIMV%NFLEVG+1)=0.0_JPRB
+ENDIF 
+
+!     ------------------------------------------------------------------
+
+
+
+END SUBROUTINE LAVABO
+
