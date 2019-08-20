@@ -126,7 +126,8 @@ IPROFS=KPROF-KST+1
 
 !   - Computation of Nu*D (SI term for continuity equation)
 !     and Tau*D (SI term for temperature equation).
-CALL SITNU(YRDIM%NPROMA,1,PGMV(KST,1,YDGMV%YT0%MDIV),PTOD0(KST,1),PSDIV0(KST),IPROFS)
+CALL SITNU(KST,KPROF,YRDIM%NPROMA,YRDIMV%NFLEVG,&
+          &PGMV(1,1,YDGMV%YT0%MDIV),PTOD0,PSDIV0)
 !   - Computation of Nabla(Gamma*T+Mu*Pi) (SI term for momentum equation).
 CALL SIGAM(KST,KPROF,YRDIM%NPROMA,YRDIMV%NFLEVG,PGAGT0L,&
           &PGMV(1,1,YDGMV%YT0%MTL),PGMVS(1,YDGMV%YT0%MSPL))
@@ -138,7 +139,8 @@ CALL SIGAM(KST,KPROF,YRDIM%NPROMA,YRDIMV%NFLEVG,PGAGT0M,&
 IF (.NOT.LTWOTL) THEN
   ! - Computation of Nu*D (SI term for continuity equation)
   !   and Tau*D (SI term for temperature equation).
-  CALL SITNU(YRDIM%NPROMA,1,PGMV(KST,1,YDGMV%YT9%MDIV),PTOD9(KST,1),PSDIV9(KST),IPROFS)
+  CALL SITNU(KST,KPROF,YRDIM%NPROMA,YRDIMV%NFLEVG,&
+           &PGMV(1,1,YDGMV%YT9%MDIV),PTOD9,PSDIV9)
   ! - Computation of Nabla(Gamma*T+Mu*Pi) (SI term for momentum equation).
   CALL SIGAM(KST,KPROF,YRDIM%NPROMA,YRDIMV%NFLEVG,PGAGT9L,&
             &PGMV(1,1,YDGMV%YT9%MTL),PGMVS(1,YDGMV%YT9%MSPL))
