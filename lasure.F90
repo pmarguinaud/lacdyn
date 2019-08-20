@@ -1,6 +1,6 @@
 SUBROUTINE LASURE(&
  ! ----- INPUT ---------------------------------------------------------------
- & KSTART,KPROF,PBETADT,PDT,YDGSGEOM,&
+ & KIDIA,KFDIA,PBETADT,PDT,YDGSGEOM,&
  ! ----- OUTPUT --------------------------------------------------------------
  & PDTS2,PBT,LD2TLFF1,PBDT,PREDIV,PESGP,PESGM )  
 
@@ -20,8 +20,8 @@ SUBROUTINE LASURE(&
 !        --------------------
 
 !        INPUT:
-!          KSTART  : first element of work.
-!          KPROF   : depth of work.
+!          KIDIA  : first element of work.
+!          KFDIA   : depth of work.
 !          PBETADT : BETADT or 0 according to configuration.
 !          PDT     : time step for the first time-integration step of
 !                    a leap-frog scheme or all time-integration steps of
@@ -85,8 +85,8 @@ USE YOMGSGEOM, ONLY : TGSGEOM
 
 IMPLICIT NONE
 
-INTEGER(KIND=JPIM),INTENT(IN)    :: KSTART 
-INTEGER(KIND=JPIM),INTENT(IN)    :: KPROF 
+INTEGER(KIND=JPIM),INTENT(IN)    :: KIDIA 
+INTEGER(KIND=JPIM),INTENT(IN)    :: KFDIA 
 REAL(KIND=JPRB)   ,INTENT(IN)    :: PBETADT
 REAL(KIND=JPRB)   ,INTENT(IN)    :: PDT 
 TYPE(TGSGEOM)     ,INTENT(IN)    :: YDGSGEOM
@@ -119,17 +119,17 @@ PDTS2 = 0.5_JPRB*PDT
 PBT = PDTS2*PBETADT
 
 IF (YRDYN%LSIDG) THEN
-  DO JROF=KSTART,KPROF
+  DO JROF=KIDIA,KFDIA
     PBDT(JROF)  = PBT
     PREDIV(JROF)= 1.0_JPRB
   ENDDO
 ELSEIF (YREDYN%LESIDG) THEN
-  DO JROF=KSTART,KPROF
+  DO JROF=KIDIA,KFDIA
     PBDT(JROF)  = PBT*YDGSGEOM%GMAPPA(JROF)/(YDGSGEOM%GM(JROF)*YDGSGEOM%GM(JROF))
     PREDIV(JROF)= YDGSGEOM%GMAPPA(JROF)/(YDGSGEOM%GM(JROF)*YDGSGEOM%GM(JROF))
   ENDDO
 ELSE
-  DO JROF=KSTART,KPROF
+  DO JROF=KIDIA,KFDIA
     PBDT(JROF)  = PBT*YRGEM%RSTRET*YRGEM%RSTRET/(YDGSGEOM%GM(JROF)*YDGSGEOM%GM(JROF))
     PREDIV(JROF)= YRGEM%RSTRET*YRGEM%RSTRET/(YDGSGEOM%GM(JROF)*YDGSGEOM%GM(JROF))
   ENDDO
