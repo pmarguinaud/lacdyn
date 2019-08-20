@@ -93,7 +93,7 @@ DO JLON=1,KNLON
      & JLON)&
      & +YRDYN%SIALPH(JLEV)*PD(IDT))  
     IF (JLON == 1) THEN
-      WRITE (0, *) __FILE__, ':', __LINE__, PT (IDT)
+      WRITE (0, *) __FILE__, ':', __LINE__, JLEV, PT (IDT)
     ENDIF
 
   ENDDO
