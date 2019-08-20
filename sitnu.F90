@@ -84,18 +84,6 @@ INTEGER(KIND=JPIM) :: IDT, JLEV, JLON
 REAL(KIND=JPRB) :: ZREC
 
 
-!     ------------------------------------------------------------------
-
-!     ------------------------------------------------------------------
-
-
-
-
-!     ------------------------------------------------------------------
-
-!*       1.    SUM DIVERGENCE AND COMPUTES TEMPERATURE.
-!              ----------------------------------------
-
 DO JLON=1,KNLON
   ZSDIVX(0,JLON)=0.0_JPRB
   DO JLEV=1,YRDIMV%NFLEVG
@@ -107,9 +95,5 @@ DO JLON=1,KNLON
   ENDDO
   PSP(JLON)=ZSDIVX(YRDIMV%NFLEVG,JLON)*YRDYN%SIRPRN
 ENDDO
-
-!     ------------------------------------------------------------------
-
-
 
 END SUBROUTINE SITNU
