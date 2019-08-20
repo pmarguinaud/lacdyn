@@ -76,8 +76,6 @@ REAL(KIND=JPRB)   ,INTENT(IN)    :: PSP(KLON)
 
 !     ------------------------------------------------------------------
 
-REAL(KIND=JPRB) :: ZSPHI(KLON,0:KFLEVG), ZOUT(KLON,0:KFLEVG)
-REAL(KIND=JPRB) :: ZIN  (KLON,0:KFLEVG+1)
 REAL(KIND=JPRB) :: ZSPHIX(KLON,0:KFLEVG)
 INTEGER(KIND=JPIM) :: JLEV, JLON
 
