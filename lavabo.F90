@@ -1,4 +1,4 @@
-SUBROUTINE LAVABO(KIDIA,KFDIA,LD2TLFF1,PB1)
+SUBROUTINE LAVABO(KLON,KIDIA,KFDIA,LD2TLFF1,PB1)
 
 !**** *LAVABO*   Semi-Lagrangian scheme.
 !                VAlues at the BOundaries: Upper and lower extrapolations.
@@ -87,10 +87,11 @@ USE YOM_YGFL , ONLY : YGFL
 
 IMPLICIT NONE
 
+INTEGER(KIND=JPIM),INTENT(IN)    :: KLON
 INTEGER(KIND=JPIM),INTENT(IN)    :: KIDIA 
 INTEGER(KIND=JPIM),INTENT(IN)    :: KFDIA 
 LOGICAL           ,INTENT(IN)    :: LD2TLFF1 
-REAL(KIND=JPRB)   ,INTENT(INOUT) :: PB1(YRDIM%NPROMA,YRPTRSLB1%NFLDSLB1)
+REAL(KIND=JPRB)   ,INTENT(INOUT) :: PB1(KLON,YRPTRSLB1%NFLDSLB1)
 
 !     ------------------------------------------------------------------
 
