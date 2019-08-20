@@ -103,4 +103,5 @@ ENDDO
 
 
 WRITE (0, *) __FILE__, ':', __LINE__, PSP (1)
+
 END SUBROUTINE SITNU
