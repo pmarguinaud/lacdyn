@@ -334,6 +334,7 @@ ENDIF
 ! * LSETTLS is replaced by LLSETTLSW=.FALSE. for wind-eqn if VESL>0 because
 !   stable extrapolation deteriorates scores without improving stability.
 
+
 IF (PESGP > PESGM) THEN
   LLSETTLSW=.FALSE.
 ELSE
@@ -346,6 +347,11 @@ DO JLEV=1,YRDIMV%NFLEVG
     PB2(JROF,YRPTRSLB2%MSLB2USI+JLEV-1)=PBT*PGAGT0L(JROF,JLEV)
     PB2(JROF,YRPTRSLB2%MSLB2VSI+JLEV-1)=PBT*PGAGT0M(JROF,JLEV)
   ENDDO
+
+  IF ((YRPTRSLB2%MSLB2USI+JLEV-1 == 1) .OR. &
+    & (YRPTRSLB2%MSLB2VSI+JLEV-1 == 1)) THEN
+  ENDIF
+
 
   ! * Add pressure gradient term + Rayleigh friction in the wind equation.
   DO JROF=KST,KPROF

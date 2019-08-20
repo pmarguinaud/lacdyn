@@ -268,6 +268,8 @@ CALL LASURE(KST,KPROF,PBETADT,PDT,YDGSGEOM,&
 !*       2.    COMPUTATION OF THE LINEAR TERMS FOR SEMI-IMPLICIT SCHEME.
 !              ---------------------------------------------------------
 
+ZGAGT0M = 0
+
 CALL LASSIE(YDGMV,KST,KPROF,YDGSGEOM%RCORI,PGMV,PGMVS,PGFL,&
 & ZSDIV0,ZSDIV9,ZTOD0,ZTOD9,ZGAGT0L,ZGAGT0M,ZGAGT9L,ZGAGT9M)  
 
@@ -350,6 +352,7 @@ IF (ALLOCATED(ZDPD0)) DEALLOCATE(ZDPD0)
 IF (ALLOCATED(ZDPD9)) DEALLOCATE(ZDPD9)
 
 !     ------------------------------------------------------------------
+
 
 
 

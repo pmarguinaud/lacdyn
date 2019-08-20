@@ -90,6 +90,7 @@ INTEGER(KIND=JPIM) :: IDT, JLEV, JLON
 
 ASSOCIATE(SIALPH=>YRDYN%SIALPH, SILNPR=>YRDYN%SILNPR, SIRPRG=>YRDYN%SIRPRG)
 
+
 !     ------------------------------------------------------------------
 
 !*       1.    SUM GEOPOTENTIAL, COMPUTES P AND PUT IT IN PD.
@@ -131,7 +132,6 @@ IF(LLVFE) THEN
 !$OMP END PARALLEL DO
 
 ELSE
-!$OMP PARALLEL DO SCHEDULE(STATIC) PRIVATE(JLON,JLEV,IDT)
   DO JLON=1,KNLON
     ZSPHIX(KFLEVG,JLON)=0.0_JPRB
     DO JLEV=KFLEVG,1,-1
@@ -140,7 +140,6 @@ ELSE
       PD(IDT)=ZSPHIX(JLEV,JLON)+SIALPH(JLEV)*RD*PT(IDT)+PSP(JLON)*SIRPRG
     ENDDO
   ENDDO
-!$OMP END PARALLEL DO
 ENDIF
 
 !      -----------------------------------------------------------------
