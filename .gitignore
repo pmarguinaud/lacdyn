@@ -2,6 +2,7 @@
 *.mod
 *.optrpt
 *.xml
+*.old
 *.swp
 *.IN
 *.OUT
