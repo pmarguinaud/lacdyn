@@ -79,7 +79,6 @@ REAL(KIND=JPRB)   ,INTENT(IN)    :: PSP(KLON)
 
 !     ------------------------------------------------------------------
 
-REAL(KIND=JPRB) :: ZSPHIX(KLON,0:KFLEVG)
 INTEGER(KIND=JPIM) :: JLEV, JLON
 INTEGER(KIND=JPIM) :: IPSTPT_ZSPHIX
 
