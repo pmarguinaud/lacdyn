@@ -81,12 +81,26 @@ REAL(KIND=JPRB)   ,INTENT(IN)    :: PSP(KLON)
 
 REAL(KIND=JPRB) :: ZSPHIX(KLON,0:KFLEVG)
 INTEGER(KIND=JPIM) :: JLEV, JLON
+INTEGER(KIND=JPIM) :: IPSTPT_ZSPHIX
+
+INTEGER(KIND=JPIM) :: IPSTPT
+
 
 !     ------------------------------------------------------------------
 
 !*       1.    SUM GEOPOTENTIAL, COMPUTES P AND PUT IT IN PD.
 !              ----------------------------------------------
 
+
+IPSTPT = KPSTPT
+
+IPSTPT_ZSPHIX = IPSTPT
+
+IPSTPT = IPSTPT + KFLEVG-0+1
+
+#define ZSPHIX(i,j) PSTACK (i,IPSTPT_ZSPHIX+j-(0))
+
+IF (IPSTPT > KPSTSZ) CALL ABOR1 ('IPSTPT > KPSTSZ')
 DO JLON=KIDIA,KFDIA
   ZSPHIX(JLON,KFLEVG)=0.0_JPRB
 ENDDO
