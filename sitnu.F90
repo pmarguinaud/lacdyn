@@ -80,7 +80,6 @@ REAL(KIND=JPRB)   ,INTENT(OUT)   :: PSP(KLON)
 
 !     ------------------------------------------------------------------
 
-REAL(KIND=JPRB) :: ZSDIVX(KLON,0:YRDIMV%NFLEVG)
 INTEGER(KIND=JPIM) :: JLEV, JLON
 INTEGER(KIND=JPIM) :: IPSTPT_ZSDIVX
 
