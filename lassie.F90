@@ -109,6 +109,10 @@ REAL(KIND=JPRB)   ,INTENT(INOUT) :: PGAGT9M(KLON,YRDIMV%NFLEVG)
 REAL(KIND=JPRB) :: ZR9  (KLON,YRDIMV%NFLEVG)
 
 INTEGER(KIND=JPIM) :: JLEV, JLON
+INTEGER(KIND=JPIM) :: IPSTPT_ZR9
+
+INTEGER(KIND=JPIM) :: IPSTPT
+
 
 
 !     ------------------------------------------------------------------
@@ -128,6 +132,16 @@ INTEGER(KIND=JPIM) :: JLEV, JLON
 
 !   - Computation of Nu*D (SI term for continuity equation)
 !     and Tau*D (SI term for temperature equation).
+
+IPSTPT = KPSTPT
+
+IPSTPT_ZR9 = IPSTPT
+
+IPSTPT = IPSTPT + YRDIMV%NFLEVG
+
+#define ZR9(i,j) PSTACK (i,IPSTPT_ZR9+j-(1))
+
+IF (IPSTPT > KPSTSZ) CALL ABOR1 ('IPSTPT > KPSTSZ')
 CALL SITNU(PSTACK, KPSTSZ, KPSTPT, KIDIA,KFDIA,KLON,YRDIMV%NFLEVG,&
           &PGMV(1,1,YDGMV%YT0%MDIV),PTOD0,PSDIV0)
 !   - Computation of Nabla(Gamma*T+Mu*Pi) (SI term for momentum equation).
@@ -159,7 +173,7 @@ IF (LSPRT) THEN
     !  predictor: treatment of "t" data.
     !  corrector: treatment of provisional "t+dt" data.
     ! So in this case this is always the Y[X]%MP data which are used.
-    CALL GPRCP(PSTACK, KPSTSZ, KPSTPT, KLON,KIDIA,KFDIA,YRDIMV%NFLEVG,PGFL=PGFL,PR=ZR9)  
+    CALL GPRCP(PSTACK, KPSTSZ, KPSTPT, KLON,KIDIA,KFDIA,YRDIMV%NFLEVG,PGFL=PGFL,PR=ZR9 (1, 1))  
     DO JLEV=1,YRDIMV%NFLEVG
       DO JLON=KIDIA,KFDIA
         PTOD0(JLON,JLEV)=RD*PTOD0(JLON,JLEV)/ZR9(JLON,JLEV)
