@@ -3,11 +3,12 @@ FRTFLAGS = -convert big_endian -assume byterecl -traceback -qopenmp -qopenmp-thr
 #OPT_FRTFLAGS = -fp-model source -g -O2 -ip -xAVX
 OPT_FRTFLAGS = -fp-model source -g -O0 -ip -debug full
 
-FC = /home/gmap/mrpm/marguina/install/gmkpack_support/wrapper/I161150/ifort $(FRTFLAGS) $(OPT_FRTFLAGS)
+#FC = /home/gmap/mrpm/marguina/install/gmkpack_support/wrapper/I161150/ifort $(FRTFLAGS) $(OPT_FRTFLAGS)
+FC = pgf90 -DCPU  -mp -byteswapio -Mlarge_arrays
 
 all: wrap_lacdyn.x
 
-MODULES=parkind1.o intdyn_mod.o par_rdlr.o ptrslb1.o ptrslb2.o yomcst.o yomct0.o yomct3.o yomcver.o yomdim.o yomdimv.o yomdyn.o yomdyna.o yomgmv.o yomorog.o yomsta.o yomvert.o load_mod.o yemdyn.o yoephy.o yom_ygfl.o yomgem.o yomlddh.o yommddh.o yomparar.o yomphy.o yomgsgeom.o crmdims.o type_gmvs.o 
+MODULES=parkind1.o intdyn_mod.o par_rdlr.o ptrslb1.o ptrslb2.o yomcst.o yomct0.o yomct3.o yomcver.o yomdim.o yomdimv.o yomdyn.o yomdyna.o yomgmv.o yomorog.o yomsta.o yomvert.o load_mod.o yemdyn.o yoephy.o yom_ygfl.o yomgem.o yomlddh.o yommddh.o yomparar.o yomphy.o yomgsgeom.o crmdims.o type_gmvs.o xrd_unix_env.o xrd_getoptions.o
 
 yomlddh.o: yomlddh.F90 
 	$(FC) -c yomlddh.F90
@@ -123,6 +124,12 @@ yomcst.o: yomcst.F90 parkind1.o
 yomct3.o: yomct3.F90 parkind1.o
 	$(FC) -c yomct3.F90
 
+xrd_unix_env.o: xrd_unix_env.F90 parkind1.o
+	$(FC) -c xrd_unix_env.F90
+
+xrd_getoptions.o: xrd_getoptions.F90 parkind1.o xrd_unix_env.o
+	$(FC) -c xrd_getoptions.F90
+
 parkind1.o: parkind1.F90 
 	$(FC) -c parkind1.F90
 
@@ -138,8 +145,8 @@ abor1.o: abor1.F90
 wrap_lacdyn.o: wrap_lacdyn.F90 $(MODULES)
 	$(FC) -c wrap_lacdyn.F90
 
-wrap_lacdyn.x: wrap_lacdyn.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o sigam.o abor1.o
-	$(FC) -o wrap_lacdyn.x wrap_lacdyn.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o abor1.o sigam.o
+wrap_lacdyn.x: wrap_lacdyn.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o sigam.o abor1.o xrd_unix_env.o xrd_getoptions.o
+	$(FC) -o wrap_lacdyn.x wrap_lacdyn.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o abor1.o sigam.o xrd_unix_env.o xrd_getoptions.o
 
 clean:
 	\rm -f *.o *.x *.mod *.xml *.optrpt

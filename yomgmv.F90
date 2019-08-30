@@ -16,11 +16,6 @@ TYPE :: TGMV
 
 !-------------------------------------------------------------------------
 
-REAL(KIND=JPRB), ALLOCATABLE :: GMV   (:,:,:,:) ! Multilevel fields at t and t-dt
-REAL(KIND=JPRB), ALLOCATABLE :: GMVS  (:,:,:)   ! Single level fields at t snd t-dt
-REAL(KIND=JPRB), ALLOCATABLE :: GMVT1 (:,:,:,:) ! Multilevel fields at t+dt
-REAL(KIND=JPRB), ALLOCATABLE :: GMVT1S(:,:,:)   ! Single level fields at t+dt 
-
 INTEGER(KIND=JPIM) :: NDIMGMV ! Third dim. of GMV "(NPROMA,NFLEVG,NDIMGMV,NGPBLKS)"
 INTEGER(KIND=JPIM) :: NDIMGMVS ! Second dim. GMVS "(NPROMA,NDIMGMVS,NGPBLKS)"
 
