@@ -132,7 +132,7 @@ USE PTRSLB1  , ONLY : YRPTRSLB1
 USE PTRSLB2  , ONLY : YRPTRSLB2
 USE PAR_RDLR , ONLY : JP_ASRF, JP_DIMR0
 USE INTDYN_MOD,ONLY : YYTVC0
-
+USE YOMSTA
 !------------------------------------------------------------------------------
 
 IMPLICIT NONE
