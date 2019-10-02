@@ -315,4 +315,6 @@ END TYPE TYPE_GFLD
 ! GFL general descriptor
 TYPE(TYPE_GFLD) :: YGFL 
 
+!$acc declare create(YGFL)
+
 END MODULE YOM_YGFL

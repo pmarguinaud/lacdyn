@@ -292,4 +292,7 @@ END TYPE TMDDH
 TYPE(TMDDH) :: YRMDDH 
 
 !     ------------------------------------------------------------------
+!$acc declare create(YRMDDH)
+
+
 END MODULE YOMMDDH

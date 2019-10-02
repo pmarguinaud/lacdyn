@@ -89,4 +89,6 @@ TYPE(TGEM) :: YRGEM
 
 !     ------------------------------------------------------------------
 
+!$acc declare create(YRGEM)
+
 END MODULE YOMGEM

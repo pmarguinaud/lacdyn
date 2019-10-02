@@ -38,4 +38,6 @@ TYPE(TDIMV) :: YRDIMV
 
 !     ------------------------------------------------------------------
 
+!$acc declare create(YRDIMV)
+
 END MODULE YOMDIMV

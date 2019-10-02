@@ -37,4 +37,18 @@ INTEGER(KIND=JPIM) :: JP_DIMR9
 INTEGER(KIND=JPIM) :: JP_DIMR1
 INTEGER(KIND=JPIM) :: JP_DIMR
 
+
+!$acc declare create(JP_RSAF)
+!$acc declare create(JP_RSAH)
+!$acc declare create(JP_ASRF)
+!$acc declare create(JP_ASRH)
+!$acc declare create(JP_RSAFL)
+!$acc declare create(JP_RSAFM)
+!$acc declare create(JP_RSAHL)
+!$acc declare create(JP_RSAHM)
+!$acc declare create(JP_DIMR0)
+!$acc declare create(JP_DIMR9)
+!$acc declare create(JP_DIMR1)
+!$acc declare create(JP_DIMR)
+
 END MODULE PAR_RDLR

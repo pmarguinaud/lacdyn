@@ -148,4 +148,6 @@ TYPE(TPARAR) :: YRPARAR
 
 
 !     ------------------------------------------------------------------
+!$acc declare create(YRPARAR)
+
 END MODULE YOMPARAR

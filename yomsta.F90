@@ -123,4 +123,7 @@ TYPE(TSTA) :: YRSTA
 ! Keep this so that NAMSTA doesn't have to change, see SUSTA
 REAL(KIND=JPRB) :: HEXTRAP
 
+!$acc declare create(YRSTA)
+!$acc declare create(HEXTRAP)
+
 END MODULE YOMSTA

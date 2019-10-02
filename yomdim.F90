@@ -144,4 +144,6 @@ TYPE(TDIM) :: YRDIM
 
 !     ------------------------------------------------------------------
 
+!$acc declare create(YRDIM)
+
 END MODULE YOMDIM

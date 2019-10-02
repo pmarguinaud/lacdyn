@@ -78,4 +78,26 @@ NAMELIST/NAMCVER/LVERTFE,NVSCH,LRNHC1, &
 
 ! =============================================================================
 
+!$acc declare create(LVERTFE)
+!$acc declare create(NVSCH)
+!$acc declare create(LRNHC1)
+!$acc declare create(LVFE_LAPL)
+!$acc declare create(LVFE_LAPL_BC)
+!$acc declare create(LVFE_X_TERM)
+!$acc declare create(LVFE_Z_TERM)
+!$acc declare create(LVFE_GW)
+!$acc declare create(LVFE_DELNHPRE)
+!$acc declare create(LVFE_GWMPA)
+!$acc declare create(LVFE_DERIB)
+!$acc declare create(LVFE_DBCS)
+!$acc declare create(LVFE_DBCT)
+!$acc declare create(LVFE_CENTRI)
+!$acc declare create(RVFE_CENTRI)
+!$acc declare create(LVFE_APPROX)
+!$acc declare create(LVFE_VDA)
+!$acc declare create(LVFE_INT_ECMWF)
+!$acc declare create(LVFE_INTB)
+!$acc declare create(NVFE_ORDER)
+!$acc declare create(LVFE_LAPL_HALF)
+
 END

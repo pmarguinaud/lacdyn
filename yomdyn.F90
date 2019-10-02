@@ -632,4 +632,6 @@ END TYPE TDYN
 TYPE(TDYN) :: YRDYN 
 
 !     ------------------------------------------------------------------
+!$acc declare create(YRDYN)
+
 END MODULE YOMDYN

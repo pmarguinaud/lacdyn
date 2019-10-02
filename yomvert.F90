@@ -114,4 +114,8 @@ TYPE(TVAB)   :: YRVAB
 TYPE(TVETA)  :: YRVETA 
 TYPE(TVFE)   :: YRVFE  
 
+!$acc declare create(YRVAB)
+!$acc declare create(YRVETA)
+!$acc declare create(YRVFE)
+
 END MODULE YOMVERT
