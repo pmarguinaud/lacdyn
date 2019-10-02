@@ -36,7 +36,6 @@ MODULE INTDYN_MOD
 USE PARKIND1 , ONLY : JPIM, JPRB
 
 IMPLICIT NONE
-SAVE
 
 !=============================================================================
 

@@ -5,6 +5,7 @@ OPT_FRTFLAGS = -fp-model source -g -O0 -ip -debug full
 
 #FC = /home/gmap/mrpm/marguina/install/gmkpack_support/wrapper/I161150/ifort $(FRTFLAGS) $(OPT_FRTFLAGS)
 FC = pgf90 -DCPU  -mp -byteswapio -Mlarge_arrays
+FC = pgf90 -DACC -acc -byteswapio -Mlarge_arrays -ta=tesla:cc60 -Minfo=all 
 
 all: wrap_lacdyn.x
 

@@ -4,7 +4,6 @@ USE PARKIND1 , ONLY : JPIM, JPRB
 
 IMPLICIT NONE
 
-SAVE
 
 !     ------------------------------------------------------------------
 !     DIAGNOSTIQUES DOMAINES HORIZONTAUX

@@ -4,7 +4,6 @@ USE PARKIND1  ,ONLY : JPIM
 
 IMPLICIT NONE
 
-SAVE
 
 ! Values that NPHY can obtain:
 INTEGER(KIND=JPIM), PARAMETER  ::    JPHYEC =   1  ! for ECMWF physics

@@ -1,3 +1,4 @@
+#include "simple4.h"
 SUBROUTINE SITNU(PSTACK, KPSTSZ, KPSTPT, KIDIA,KFDIA,KLON,KFLEVG,PD,PT,PSP)
 
 !**** *SITNU*   - Continuity equation for semi-implicit.

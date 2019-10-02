@@ -4,7 +4,6 @@ USE PARKIND1  ,ONLY : JPIM
 
 IMPLICIT NONE
 
-SAVE
 
 !     NFLDSLB2     - Number of fields in semi-lagrangian buffer 2
 !     MSLBUF2      - whole SLB2-pointer.

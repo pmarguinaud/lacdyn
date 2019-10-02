@@ -2,7 +2,6 @@ MODULE YOMLDDH
 
 IMPLICIT NONE
 
-SAVE
 
 !     ------------------------------------------------------------------
 !     LOGIQUE DIAGNOSTIQUES DOMAINES HORIZONTAUX

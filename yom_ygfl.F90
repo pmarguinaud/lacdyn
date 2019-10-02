@@ -4,7 +4,6 @@ USE PARKIND1 , ONLY : JPIM, JPRB
 USE CRMDIMS   ,ONLY : CRMBUFSIZE
 
 IMPLICIT NONE
-SAVE
 
 !-------------------------------------------------------------------------
 ! Contains the descriptors of GFL arrays

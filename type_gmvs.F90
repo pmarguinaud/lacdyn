@@ -3,7 +3,6 @@ MODULE TYPE_GMVS
 USE PARKIND1  ,ONLY : JPIM
 
 IMPLICIT NONE
-SAVE
 
 !--------------------------------------------------------------------
 ! Type declarations used for GMV (see yomgmv.F90)

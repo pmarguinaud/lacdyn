@@ -1,3 +1,4 @@
+#include "simple4.h"
 SUBROUTINE LAVABO(PSTACK, KPSTSZ, KPSTPT, KLON,KIDIA,KFDIA,LD2TLFF1,PB1)
 
 !**** *LAVABO*   Semi-Lagrangian scheme.

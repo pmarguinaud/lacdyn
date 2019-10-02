@@ -1,3 +1,4 @@
+#include "simple4.h"
 SUBROUTINE SIGAM(PSTACK, KPSTSZ, KPSTPT, KIDIA,KFDIA,KLON,KFLEVG,PD,PT,PSP)
 
 !**** *SIGAM* - Solve hydrostatic operator in semi-implicit

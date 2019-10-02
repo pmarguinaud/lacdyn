@@ -8,7 +8,6 @@ USE PARKIND1  ,ONLY : JPIM
 
 IMPLICIT NONE
 
-SAVE
 
 ! JP_RSAF : parameter pointer for (r/a) at full levels.
 ! JP_RSAH : parameter pointer for (r/a) at half levels.

@@ -4,7 +4,6 @@ USE PARKIND1, ONLY : JPRB, JPIM
 
 IMPLICIT NONE
 
-SAVE
 
 !     -----------------------------------------------------------------
 !*    ** *YOEPHY* - SWITCHES RELATED TO DIABATIC PROCESSES

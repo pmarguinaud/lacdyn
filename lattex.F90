@@ -1,3 +1,4 @@
+#include "simple4.h"
 SUBROUTINE LATTEX(PSTACK, KPSTSZ, KPSTPT, KLON, YDGMV, &
  ! --- INPUT --------------------------------------------------
  & KIDIA,KFDIA,PDTS2,PBT,PBDT,PESGP,PESGM,&
