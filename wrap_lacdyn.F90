@@ -83,17 +83,21 @@ CHARACTER (LEN=32) :: CLCASE
 INTEGER, POINTER :: IDIFFBLOCK (:) => NULL ()
 
 #include "lacdyn.intfb.h"
+#include "notfunny.intfb.h"
 
 YDGSGEOM_ALL => NULL ()
 
-CALL INITOPTIONS ()
-CALL GETOPTION ("--case", CLCASE, MND = .TRUE.)
-CALL GETOPTION ("--diff", LLDIFF)
-CALL GETOPTION ("--diff-block-list", IDIFFBLOCK)
+!CALL INITOPTIONS ()
+!CALL GETOPTION ("--case", CLCASE, MND = .TRUE.)
+!CALL GETOPTION ("--diff", LLDIFF)
+!CALL GETOPTION ("--diff-block-list", IDIFFBLOCK)
 ICOUNT1 = 0 
-CALL GETOPTION ("--count", ICOUNT1)
+!CALL GETOPTION ("--count", ICOUNT1)
 KLON1 = 0 
 !CALL CHECKOPTIONS ()
+
+CLCASE='t0031'
+LLDIFF=.FALSE.
 
 
 
@@ -197,14 +201,19 @@ ENDDO
 
 PRINT *, "-- RUN",KIDIA,KFDIA
 #ifdef ACC
-!$acc parallel loop gang vector private(IBL) private(JJ) collapse(2)
+!$acc parallel loop gang vector private(IBL) collapse(2)
 #else
 !$OMP PARALLEL DO PRIVATE (IBL,JJ,JIDIA,JFDIA)
 #endif
-DO IBL = 1, ICOUNT
+DO IBL = 1, 1
   DO JJ = KIDIA, KFDIA
-
-    CALL LACDYN(PSTACK_ALL(:,:,IBL),KPSTSZ,KPSTPT,KLON,YDGMV_ALL(IBL),JJ,JJ,PBETADT,PDT,&
+    JIDIA=JJ
+    JFDIA=JJ
+    CALL notfunny(JJ,JJ)
+    CALL notfunny(JIDIA,JFDIA)
+#ifdef undef
+!   PRINT *, JJ
+    CALL LACDYN(PSTACK_ALL(:,:,IBL),KPSTSZ,KPSTPT,KLON,JJ,YDGMV_ALL(IBL),JJ,PBETADT,PDT,&
      & PSLHDA_ALL(:,IBL),PSLHDD0_ALL(:,IBL),YDGSGEOM_ALL(IBL),YDOROG_ALL(IBL),POROGL_ALL(:,IBL),&
      & POROGM_ALL(:,IBL),PVCRSSA9F_ALL(:,:,IBL),PNHXT9_ALL(:,:,IBL),&
      & PVCRS0_ALL(:,:,:,IBL),PVCW0F_ALL(:,:,IBL),PWDLW0F_ALL(:,:,IBL),&
@@ -215,6 +224,7 @@ DO IBL = 1, ICOUNT
      & KSETTLOFF_ALL(:,IBL),PGMV_ALL(:,:,:,IBL),PGMVS_ALL(:,:,IBL),PB1_ALL(:,:,IBL),&
      & PB2_ALL(:,:,IBL),PGMVT1_ALL(:,:,:,IBL),PGMVT1S_ALL(:,:,IBL),PGWS_ALL(:,IBL),&
      & PGMVTNDSI_ALL(:,:,:,IBL),PWRL95_ALL(:,:,IBL))
+#endif
 
   ENDDO
 

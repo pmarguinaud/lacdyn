@@ -7,7 +7,7 @@ TOP=..
 
 
 ifeq ($(ARCH), GPU)
-FC = pgf90 -DACC -acc -byteswapio -Mlarge_arrays -ta=tesla:managed:cc60 -Minfo=all -Mcuda -O2 -I$(TOP)
+FC = pgf90 -DACC -acc -byteswapio -Mlarge_arrays -ta=tesla:managed:cc60 -Minfo=all -Mcuda -O1 -I$(TOP)
 LD = pgf90 -DACC -acc -byteswapio -Mlarge_arrays -ta=tesla:managed:cc60 -Minfo=all -Mcuda=rdc #code relogable à gérer
 endif
 
@@ -154,11 +154,14 @@ yomgem.o: $(TOP)/yomgem.F90 parkind1.o
 abor1.o: $(TOP)/abor1.F90
 	$(FC) -c $(TOP)/abor1.F90
 
+notfunny.o: $(TOP)/notfunny.F90
+	$(FC) -c $(TOP)/notfunny.F90
+
 wrap_lacdyn.o: $(TOP)/wrap_lacdyn.F90 $(MODULES)
 	$(FC) -c $(TOP)/wrap_lacdyn.F90
 
-wrap_lacdyn.x: wrap_lacdyn.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o sigam.o abor1.o xrd_unix_env.o xrd_getoptions.o
-	$(LD) -o wrap_lacdyn.x wrap_lacdyn.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o abor1.o sigam.o xrd_unix_env.o xrd_getoptions.o
+wrap_lacdyn.x: wrap_lacdyn.o notfunny.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o sigam.o abor1.o xrd_unix_env.o xrd_getoptions.o
+	$(LD) -o wrap_lacdyn.x wrap_lacdyn.o notfunny.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o abor1.o sigam.o xrd_unix_env.o xrd_getoptions.o
 
 clean:
 	\rm -f *.o *.x *.mod *.xml *.optrpt

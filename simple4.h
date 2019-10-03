@@ -2,6 +2,7 @@
 !$acc routine (abor1) seq
 !$acc routine (gprcp) seq
 !$acc routine (lacdyn) seq
+!$acc routine (notfunny) seq
 !$acc routine (lassie) seq
 !$acc routine (lasure) seq
 !$acc routine (lattes) seq

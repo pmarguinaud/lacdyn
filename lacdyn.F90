@@ -1,7 +1,7 @@
 #include "simple4.h"
-SUBROUTINE LACDYN(PSTACK, KPSTSZ, KPSTPT, KLON, YDGMV, &
+SUBROUTINE LACDYN(PSTACK, KPSTSZ, KPSTPT, KLON, KIDIA, YDGMV, &
  ! --- INPUT ------------------------------------------------------------------
- & KIDIA,KFDIA,PBETADT,PDT,PSLHDA,PSLHDD0, &
+ & KFDIA,PBETADT,PDT,PSLHDA,PSLHDD0, &
  & YDGSGEOM,YDOROG,POROGL,POROGM,&
  & PVCRSSA9F,PNHXT9,PVCRS0,PVCW0F,PWDLW0F,PRDLR0,PRDLR9,PNHXT0,&
  & PRES0,PRDELP0,PCTY0,PUVH0,&
@@ -263,8 +263,8 @@ INTEGER(KIND=JPIM) :: IPSTPT
 !     ------------------------------------------------------------------
 
 
-
-
+PRINT *, KIDIA, KFDIA
+!PRINT *,YDGMV%YPH9%MSP
 !     ------------------------------------------------------------------
 
 !*       0.    ALLOCATIONS:
@@ -337,6 +337,15 @@ IPSTPT_ZTOD9 = IPSTPT
 IPSTPT = IPSTPT + YRDIMV%NFLEVG
 
 #define ZTOD9(i,j) PSTACK (i,IPSTPT_ZTOD9+j-(1))
+
+
+
+IF (KIDIA == 1) THEN
+! PRINT *, 123
+! DO JLEV = 1, SIZE (PB1, 2)
+!   PRINT *, PB1 (1, JLEV)
+! ENDDO
+ENDIF
 
 IF (IPSTPT > KPSTSZ) CALL ABOR1 ('IPSTPT > KPSTSZ')
 CALL LASURE(PSTACK, KPSTSZ, IPSTPT, KLON,KIDIA,KFDIA,PBETADT,PDT,YDGSGEOM,&
