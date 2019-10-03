@@ -10,7 +10,13 @@ cd gpu
 make ARCH=GPU -f ../makefile -j
 cd ..
 
-#./cpu/wrap_lacdyn.x --case t1198 --diff > cpu/out.txt 2>&1
-./gpu/wrap_lacdyn.x --case t1198 --diff | less
+#cd kpu
+#make ARCH=KPU -f ../makefile -j
+#cd ..
 
-#vim -d */out.txt
+
+#./kpu/wrap_lacdyn.x --case t0031 >& out.txt
+./cpu/wrap_lacdyn.x --case t0031  > cpu/out.txt 2>&1
+./gpu/wrap_lacdyn.x --case t0031  > gpu/out.txt 2>&1
+
+vim -d */out.txt

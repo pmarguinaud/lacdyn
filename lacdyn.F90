@@ -275,6 +275,15 @@ INTEGER(KIND=JPIM) :: IPSTPT
 !*       1.    PRELIMINARY INITIALISATIONS:
 !              ----------------------------
 
+PRINT *, KIDIA
+IF (KIDIA == 1) THEN
+PRINT *, __FILE__//':', __LINE__
+PRINT *, YRPTRSLB1%NFLDSLB1
+PRINT *, SIZE (PB1, 2)
+!DO JLEV = 1, SIZE (PB1, 2)
+!PRINT *, PB1 (1, JLEV)
+!ENDDO
+ENDIF
 
 IPSTPT = KPSTPT
 

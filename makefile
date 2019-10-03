@@ -6,6 +6,14 @@ OPT_FRTFLAGS = -fp-model source -g -O0 -ip -debug full
 TOP=..
 
 
+#FC = pgf90 -DACC -acc -byteswapio -Mlarge_arrays -ta=tesla:autocompare -Minfo=all  -O2
+
+
+ifeq ($(ARCH), KPU)
+FC = pgf90 -DKPU -acc -byteswapio -Mlarge_arrays -ta=tesla:managed:cc60 -Minfo=all -Mcuda -O2 -I$(TOP)
+LD = pgf90 -DACCK -acc -byteswapio -Mlarge_arrays -ta=tesla:managed:cc60 -Minfo=all -Mcuda=rdc #code relogable à gérer
+endif
+
 ifeq ($(ARCH), GPU)
 FC = pgf90 -DACC -acc -byteswapio -Mlarge_arrays -ta=tesla:managed:cc60 -Minfo=all -Mcuda -O2 -I$(TOP)
 LD = pgf90 -DACC -acc -byteswapio -Mlarge_arrays -ta=tesla:managed:cc60 -Minfo=all -Mcuda=rdc #code relogable à gérer

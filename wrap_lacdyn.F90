@@ -6,6 +6,7 @@ USE YOMGMV,    ONLY : TGMV
 USE YOMOROG,   ONLY : TOROG
 USE YOMGSGEOM, ONLY : TGSGEOM
 USE YOMDIMV  , ONLY : YRDIMV
+USE PTRSLB1  , ONLY : YRPTRSLB1
 USE LOAD_MOD
 
 USE XRD_GETOPTIONS
@@ -194,15 +195,30 @@ DO IBL = 1, ICOUNT
 ENDDO
 #endif 
 
+ICOUNT = 1
+
+  PRINT *, __FILE__//':', __LINE__
+  PRINT *, YRPTRSLB1%NFLDSLB1
+!$acc kernels
+  PRINT *, YRPTRSLB1%NFLDSLB1
+!$acc end kernels
+  PRINT *, __FILE__//':', __LINE__
+
 
 PRINT *, "-- RUN",KIDIA,KFDIA
 #ifdef ACC
-!$acc parallel loop gang vector private(IBL) private(JJ) collapse(2)
+!$acc parallel loop gang vector private(IBL) private(JJ) collapse(2) 
 #else
 !$OMP PARALLEL DO PRIVATE (IBL,JJ,JIDIA,JFDIA)
 #endif
+
+#ifdef KPU
+!$acc kernels
+#endif 
+
 DO IBL = 1, ICOUNT
   DO JJ = KIDIA, KFDIA
+  PRINT *, YRPTRSLB1%NFLDSLB1
     JIDIA=JJ
     JFDIA=JJ
     CALL LACDYN(PSTACK_ALL(:,:,IBL),KPSTSZ,KPSTPT,KLON,YDGMV_ALL(IBL),JIDIA,JFDIA,PBETADT,PDT,&
@@ -225,7 +241,9 @@ ENDDO
 #else
 !$OMP END PARALLEL DO
 #endif
-
+#ifdef KPU
+!$acc end kernels
+#endif 
 
 
 IF (LLDIFF .AND. ICOUNT0 == ICOUNT1 .AND. KLON1 == KLON0) THEN
