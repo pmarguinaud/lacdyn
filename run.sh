@@ -14,8 +14,8 @@ cd ..
 #make ARCH=KPU -f ../makefile -j
 #cd ..
 
-
-#./kpu/wrap_lacdyn.x --case t0031 >& out.txt
+\rm cpu/out.txt
+\rm gpu/out.txt
 ./cpu/wrap_lacdyn.x --case t0031  > cpu/out.txt 2>&1
 ./gpu/wrap_lacdyn.x --case t0031  > gpu/out.txt 2>&1
 
