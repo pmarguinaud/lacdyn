@@ -14,9 +14,9 @@ cd ..
 #make ARCH=KPU -f ../makefile -j
 #cd ..
 
-\rm cpu/out.txt
-\rm gpu/out.txt
-./cpu/wrap_lacdyn.x --case t0031  > cpu/out.txt 2>&1
-./gpu/wrap_lacdyn.x --case t0031  > gpu/out.txt 2>&1
+\rm -f cpu/out.txt
+\rm -f gpu/out.txt
+./cpu/wrap_lacdyn.x > cpu/out.txt 2>&1
+./gpu/wrap_lacdyn.x > gpu/out.txt 2>&1
 
 vim -d */out.txt
