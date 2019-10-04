@@ -90,6 +90,7 @@ PRINT *, YRPTRSLB1%NFLDSLB1
 !$acc end kernels
 PRINT *, __FILE__//':', __LINE__
 
+!$acc update device (YRPTRSLB1)
 
 #ifdef ACC
 !$acc parallel loop gang vector private(IBL) private(JJ) collapse(2) 
