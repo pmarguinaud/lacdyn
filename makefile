@@ -136,7 +136,7 @@ yomgem.o: yomgem.F90 parkind1.o
 abor1.o: abor1.F90
 	$(FC) -c abor1.F90
 
-wrap_lacdyn.o: wrap_lacdyn.F90 $(MODULES)
+wrap_lacdyn.o: wrap_lacdyn.F90 $(MODULES) contains.h
 	$(FC) -c wrap_lacdyn.F90
 
 wrap_lacdyn.x: wrap_lacdyn.o yomlddh.o yomparar.o par_rdlr.o yommddh.o yomdim.o yomorog.o yomct0.o lattes.o yomcver.o crmdims.o yemdyn.o type_gmvs.o lacdyn_load_all.o ptrslb1.o yomgsgeom.o load_mod.o sitnu.o yom_ygfl.o yomphy.o lasure.o lavabo.o yomvert.o ptrslb2.o yomdyna.o yomdimv.o lattex.o lacdyn.o lassie.o gprcp.o lattex_dnt.o yomdyn.o yomgmv.o yoephy.o yomsta.o intdyn_mod.o yomcst.o yomct3.o parkind1.o lavent.o yomgem.o sigam.o abor1.o xrd_unix_env.o xrd_getoptions.o
