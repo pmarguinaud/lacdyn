@@ -1,5 +1,8 @@
 MODULE YOMCVER
 
+
+#include "create.h"
+
 USE PARKIND1  ,ONLY : JPIM     ,JPRB
 
 IMPLICIT NONE
@@ -48,27 +51,48 @@ SAVE
 ! ----------------------------------------------------------------------
 
 LOGICAL :: LVERTFE
+create (LVERTFE)
 INTEGER(KIND=JPIM) :: NVSCH
+create (NVSCH)
 LOGICAL :: LRNHC1
+create (LRNHC1)
 LOGICAL :: LVFE_LAPL
+create (LVFE_LAPL)
 LOGICAL :: LVFE_LAPL_BC
+create (LVFE_LAPL_BC)
 LOGICAL :: LVFE_X_TERM
+create (LVFE_X_TERM)
 LOGICAL :: LVFE_Z_TERM
+create (LVFE_Z_TERM)
 LOGICAL :: LVFE_GW
+create (LVFE_GW)
 LOGICAL :: LVFE_DELNHPRE
+create (LVFE_DELNHPRE)
 LOGICAL :: LVFE_GWMPA
+create (LVFE_GWMPA)
 LOGICAL :: LVFE_DERIB
+create (LVFE_DERIB)
 LOGICAL :: LVFE_DBCS
+create (LVFE_DBCS)
 LOGICAL :: LVFE_DBCT
+create (LVFE_DBCT)
 LOGICAL :: LVFE_CENTRI
+create (LVFE_CENTRI)
 REAL(KIND=JPRB) :: RVFE_CENTRI
+create (RVFE_CENTRI)
 LOGICAL :: LVFE_APPROX
+create (LVFE_APPROX)
 LOGICAL :: LVFE_VDA
+create (LVFE_VDA)
 LOGICAL :: LVFE_INT_ECMWF
+create (LVFE_INT_ECMWF)
 LOGICAL :: LVFE_INTB
+create (LVFE_INTB)
 INTEGER(KIND=JPIM) :: NVFE_ORDER
+create (NVFE_ORDER)
 LOGICAL :: LVFE_LAPL_HALF
 
+create (LVFE_LAPL_HALF)
 ! =============================================================================
 
 NAMELIST/NAMCVER/LVERTFE,NVSCH,LRNHC1, &

@@ -1,5 +1,8 @@
 MODULE PAR_RDLR
 
+
+#include "create.h"
+
 ! Parameter pointers and dimensions for array (Z,P)RDLR, used in the
 ! Wood and Staniforth deep-layer formulation of NH equations.
 ! (Z,P)RDLR contains (r/a), (a/r), grad(r/a), at full and half levels.
@@ -26,16 +29,28 @@ SAVE
 !  (i.e. (r/a)*nabla).
 
 INTEGER(KIND=JPIM) :: JP_RSAF
+create (JP_RSAF)
 INTEGER(KIND=JPIM) :: JP_RSAH
+create (JP_RSAH)
 INTEGER(KIND=JPIM) :: JP_ASRF
+create (JP_ASRF)
 INTEGER(KIND=JPIM) :: JP_ASRH
+create (JP_ASRH)
 INTEGER(KIND=JPIM) :: JP_RSAFL
+create (JP_RSAFL)
 INTEGER(KIND=JPIM) :: JP_RSAFM
+create (JP_RSAFM)
 INTEGER(KIND=JPIM) :: JP_RSAHL
+create (JP_RSAHL)
 INTEGER(KIND=JPIM) :: JP_RSAHM
+create (JP_RSAHM)
 INTEGER(KIND=JPIM) :: JP_DIMR0
+create (JP_DIMR0)
 INTEGER(KIND=JPIM) :: JP_DIMR9
+create (JP_DIMR9)
 INTEGER(KIND=JPIM) :: JP_DIMR1
+create (JP_DIMR1)
 INTEGER(KIND=JPIM) :: JP_DIMR
 
+create (JP_DIMR)
 END MODULE PAR_RDLR

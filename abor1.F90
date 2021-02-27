@@ -1,3 +1,4 @@
+!$acc routine(ABOR1) seq
 SUBROUTINE ABOR1 (CDMESS)
 
 CHARACTER(LEN=*) :: CDMESS

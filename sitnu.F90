@@ -1,3 +1,4 @@
+!$acc routine(SITNU) seq
 SUBROUTINE SITNU(YRVFE, YRVETA, YRDYN, YRDIMV, KIDIA,KFDIA,KLON,KFLEVG,PD,PT,PSP,KSTPT,KSTSZ,PSTACK)
 
 
@@ -87,6 +88,8 @@ INTEGER(KIND=JPIM),INTENT(IN)    :: KSTSZ
 INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
 REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
+
+#include "abor1.intfb.h"
 
 
 temp (REAL(KIND=JPRB), ZSDIVX, (KLON,0:YRDIMV%NFLEVG))

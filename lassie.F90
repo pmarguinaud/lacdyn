@@ -1,3 +1,4 @@
+!$acc routine(LASSIE) seq
 SUBROUTINE LASSIE(YRVFE, YRVETA, YGFL, YRDYN, YRDIMV, YRDIM, KLON, YDGMV,KIDIA,KFDIA,PRCORI,PGMV,PGMVS,PGFL,&
  & PSDIV0,PSDIV9,PTOD0,PTOD9,PGAGT0L,PGAGT0M,PGAGT9L,PGAGT9M,KSTPT,KSTSZ,PSTACK)  
 
@@ -128,6 +129,7 @@ INTEGER(KIND=JPIM) :: JLEV, JLON
 #include "gprcp.intfb.h"
 #include "sigam.intfb.h"
 #include "sitnu.intfb.h"
+#include "abor1.intfb.h"
 
 !     ------------------------------------------------------------------
 

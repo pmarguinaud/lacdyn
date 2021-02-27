@@ -31,6 +31,10 @@ for my $en (@en)
     my ($name) = &f ('.//f:EN-N/f:N/f:n/text ()', $en, 1);
     my $stmt = &Fxtran::stmt ($en);
 
+    my @tc = &f ('./ancestor::f:T-construct', $stmt);
+
+    next if (@tc);
+
     my ($cr) = &f ('following::text ()[contains (., "' . "\n" . '")]', $stmt);
     $cr->parentNode->insertAfter (&t ("create ($name)\n"), $cr);
     

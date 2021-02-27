@@ -1,3 +1,4 @@
+!$acc routine(SIGAM) seq
 SUBROUTINE SIGAM(YRVFE, YRVETA, YRDYN, KIDIA,KFDIA,KLON,KFLEVG,PD,PT,PSP,KSTPT,KSTSZ,PSTACK)
 
 
@@ -85,6 +86,8 @@ INTEGER(KIND=JPIM),INTENT(IN)    :: KSTSZ
 INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
 REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
+
+#include "abor1.intfb.h"
 
 
 temp (REAL(KIND=JPRB), ZSPHIX, (KLON,0:KFLEVG))

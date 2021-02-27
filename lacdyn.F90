@@ -1,3 +1,4 @@
+!$acc routine(LACDYN) seq
 SUBROUTINE LACDYN(YRVFE, YRLDDH, YRSTA, YRVAB, YRPARAR, YRVETA, YRGEM, YRPHY, YGFL, &
  & YRMDDH, YRDYN, YRDIMV, YRDIM, KLON, YDGMV, &
  ! --- INPUT ------------------------------------------------------------------
@@ -278,6 +279,7 @@ LOGICAL :: LL2TLFF1, LLGWADV
 #include "lattex.intfb.h"
 #include "lavabo.intfb.h"
 #include "lavent.intfb.h"
+#include "abor1.intfb.h"
 
 !     ------------------------------------------------------------------
 

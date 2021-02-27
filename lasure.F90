@@ -1,3 +1,4 @@
+!$acc routine(LASURE) seq
 SUBROUTINE LASURE(&
  ! ----- INPUT ---------------------------------------------------------------
  & YRPHY, YRGEM, YRDYN, YRDIM, KLON, KIDIA,KFDIA,PBETADT,PDT,YDGSGEOM,&

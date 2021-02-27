@@ -1,5 +1,8 @@
 MODULE INTDYN_MOD
 
+
+#include "create.h"
+
 ! Purpose :
 ! -------
 !    To define and compute pointers and logical conditions used when
@@ -178,38 +181,60 @@ END TYPE TGFLT
 !      2.01  Type TYXB.
 
 TYPE(TXYB) :: YYTXYB0         ! at t
+create (YYTXYB0)
 TYPE(TXYB) :: YYTXYB5         ! at t (trajectory)
+create (YYTXYB5)
 TYPE(TXYB) :: YYTXYB9         ! at t-dt
+create (YYTXYB9)
 TYPE(TXYB) :: YYTXYB95        ! at t-dt (trajectory)
+create (YYTXYB95)
 TYPE(TXYB) :: YYTXYB0_PHY     ! output of MF_PHYS_PREP at t
+create (YYTXYB0_PHY)
 TYPE(TXYB) :: YYTXYB9_PHY     ! output of MF_PHYS_PREP at t-dt
+create (YYTXYB9_PHY)
 TYPE(TXYB) :: YYTXYBPP        ! for POS
+create (YYTXYBPP)
 ! ky: YYTXYB: may be introduced later in GPXYB, GPGRXYB, GPCTY, GPGRP, GNHDLRB too
 TYPE(TXYB) :: YYTXYB          ! for GP.. routines
+create (YYTXYB)
 TYPE(TXYB) :: YYTXYBT         ! for GP.. routines (trajectory)
 
+create (YYTXYBT)
 !      2.02  Type TXYBDER.
 
 TYPE(TXYBDER) :: YYTXYBDER0   ! at t
+create (YYTXYBDER0)
 TYPE(TXYBDER) :: YYTXYBDER5   ! at t (trajectory)
+create (YYTXYBDER5)
 TYPE(TXYBDER) :: YYTXYBDERPP  ! for POS
+create (YYTXYBDERPP)
 TYPE(TXYBDER) :: YYTXYBDER    ! for GP.. routines
+create (YYTXYBDER)
 TYPE(TXYBDER) :: YYTXYBDERT   ! for GP.. routines (trajectory)
 
+create (YYTXYBDERT)
 !      2.03  Type TRCP:
 
 TYPE(TRCP) :: YYTRCP0   ! at t
+create (YYTRCP0)
 TYPE(TRCP) :: YYTRCP5   ! at t (trajectory)
+create (YYTRCP5)
 TYPE(TRCP) :: YYTRCP9   ! at t-dt
+create (YYTRCP9)
 TYPE(TRCP) :: YYTRCP95  ! at t-dt (trajectory)
 
+create (YYTRCP95)
 !      2.04  Type TVERCOR.
 
 TYPE(TVERCOR) :: YYTVC0       ! at t
+create (YYTVC0)
 TYPE(TVERCOR) :: YYTVC1       ! at t+dt
+create (YYTVC1)
 TYPE(TVERCOR) :: YYTVCPP      ! for POS
+create (YYTVCPP)
 TYPE(TVERCOR) :: YYTVC        ! for GP.. routines
 
+create (YYTVC)
 !      2.05  Type TNHPRE.
 
 ! ??? expected to be coded later
@@ -225,31 +250,44 @@ TYPE(TVERCOR) :: YYTVC        ! for GP.. routines
 !      2.08  Type TCTY.
 
 TYPE(TCTY) :: YYTCTY0        ! at t
+create (YYTCTY0)
 TYPE(TCTY) :: YYTCTY5        ! at t (trajectory)
+create (YYTCTY5)
 TYPE(TCTY) :: YYTCTYPP       ! for POS
+create (YYTCTYPP)
 TYPE(TCTY) :: YYTCTY         ! for GP.. routines
 
+create (YYTCTY)
 !      2.09  Type THWIND.
 
 TYPE(THWIND) :: YYTHW0       ! at t
+create (YYTHW0)
 TYPE(THWIND) :: YYTHW9       ! at t-dt
+create (YYTHW9)
 TYPE(THWIND) :: YYTHW5       ! at t (trajectory)
+create (YYTHW5)
 TYPE(THWIND) :: YYTHW95      ! at t-dt (trajectory)
+create (YYTHW95)
 TYPE(THWIND) :: YYTHWPP      ! for POS
+create (YYTHWPP)
 TYPE(THWIND) :: YYTHW        ! for GP.. routines
 
+create (YYTHW)
 !      2.10  Type TTND.
 
 TYPE(TTND) :: YYTTND
 
+create (YYTTND)
 !      2.13  Type TGMVT.
 
 TYPE(TGMVT) :: YYTGMVT95
 
+create (YYTGMVT95)
 !      2.14  Type TGFLT.
 
 TYPE(TGFLT) :: YYTGFLT95
 
+create (YYTGFLT95)
 !=============================================================================
 
 END

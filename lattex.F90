@@ -1,3 +1,4 @@
+!$acc routine(LATTEX) seq
 SUBROUTINE LATTEX(YGFL, YRVAB, YRSTA, YRMDDH, YRLDDH, YRDYN, YRDIMV, YRDIM, KLON, YDGMV, &
  ! --- INPUT --------------------------------------------------
  & KIDIA,KFDIA,PDTS2,PBT,PBDT,PESGP,PESGM,&
