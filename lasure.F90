@@ -2,7 +2,7 @@ SUBROUTINE LASURE(&
  ! ----- INPUT ---------------------------------------------------------------
  & KLON, KIDIA,KFDIA,PBETADT,PDT,YDGSGEOM,&
  ! ----- OUTPUT --------------------------------------------------------------
- & PDTS2,PBT,LD2TLFF1,PBDT,PREDIV,PESGP,PESGM )  
+ & PDTS2,PBT,LD2TLFF1,PBDT,PREDIV,PESGP,PESGM,KSTPT,KSTSZ,PSTACK )  
 
 !**** *LASURE*   Semi-Lagrangian scheme.
 !                Set-up for other subroutines called by LACDYN.
@@ -100,6 +100,9 @@ REAL(KIND=JPRB)   ,INTENT(OUT)   :: PREDIV(KLON)
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PESGP 
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PESGM 
 
+INTEGER(KIND=JPIM),INTENT(IN)    :: KSTSZ
+INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
+REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
 INTEGER(KIND=JPIM) ::  JLON

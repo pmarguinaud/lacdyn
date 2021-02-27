@@ -1,4 +1,4 @@
-SUBROUTINE LAVABO(KLON,KIDIA,KFDIA,LD2TLFF1,PB1)
+SUBROUTINE LAVABO(KLON,KIDIA,KFDIA,LD2TLFF1,PB1,KSTPT,KSTSZ,PSTACK)
 
 !**** *LAVABO*   Semi-Lagrangian scheme.
 !                VAlues at the BOundaries: Upper and lower extrapolations.
@@ -94,6 +94,9 @@ INTEGER(KIND=JPIM),INTENT(IN)    :: KFDIA
 LOGICAL           ,INTENT(IN)    :: LD2TLFF1 
 REAL(KIND=JPRB)   ,INTENT(INOUT) :: PB1(KLON,YRPTRSLB1%NFLDSLB1)
 
+INTEGER(KIND=JPIM),INTENT(IN)    :: KSTSZ
+INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
+REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
 INTEGER(KIND=JPIM) :: JGFL, ISLB1GFL9, ISLB1GFLP9, JLON

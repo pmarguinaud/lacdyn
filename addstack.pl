@@ -1,4 +1,4 @@
-#!/home/gmap/mrpm/marguina/install/perl-5.32.0/bin/perl -w
+#!/home/ms/fr/sor/install/perl-5.32.1/bin/perl -w
 #
 use strict;
 use FileHandle;
@@ -16,7 +16,7 @@ my @pu = &f ('./f:object/f:file/f:program-unit', $doc);
 
 for my $pu (@pu)
   {
-    my ($stmt) = $pu->firstChild;
+    my ($stmt) = &f ('./f:' . &Fxtran::xpath_by_type ('stmt'), $pu);
 
     my ($darglt) = &f ('./f:dummy-arg-LT', $stmt);
 
@@ -28,7 +28,7 @@ for my $pu (@pu)
 
     my @darglt = map { $_->textContent } &f ('./f:arg-N', $darglt);
 
-    ($stmt) = &f ('.//f:T-decl-stmt[.//f:EN-decl/f:EN-N/f:N/f:n/text ()="KST"]', $pu);
+    ($stmt) = &f ('.//f:T-decl-stmt[.//f:EN-decl/f:EN-N/f:N/f:n/text ()="KLON"]', $pu);
 
     my $xpath = './/f:T-decl-stmt[' . join (' or ',
                   map { './/f:EN-decl/f:EN-N/f:N/f:n/text ()="' . $_ . '"' } @darglt) . ']';
@@ -50,9 +50,8 @@ for my $pu (@pu)
 
     {
       my $st = $stmt->cloneNode (1);
-die if ($st->textContent =~ m/JPIM/o);
-      my ($spec) = &f ('./f:_T-spec_/f:intrinsic-T-spec/f:T-N/text ()', $st);
-      $spec->replaceNode (&t ('REAL   '));
+      my ($spec) = &f ('./f:_T-spec_/f:intrinsic-T-spec', $st);
+      $spec->replaceNode (&t ('REAL (KIND=JPRB)   '));
       my ($intent) = &f ('./f:attribute/f:intent-spec/text ()', $st);
       $intent->replaceNode (&t ('INOUT'));
       my ($n) = &f ('.//f:EN-decl/f:EN-N/f:N/f:n/text ()', $st);
@@ -88,4 +87,4 @@ die if ($st->textContent =~ m/JPIM/o);
   }
 
 
-'FileHandle'->new (">$F90")->print ($doc->textContent);
+'FileHandle'->new (">$F90.new")->print ($doc->textContent);
