@@ -1,5 +1,8 @@
 SUBROUTINE LAVABO(KLON,KIDIA,KFDIA,LD2TLFF1,PB1,KSTPT,KSTSZ,PSTACK)
 
+
+#include "temp.h"
+
 !**** *LAVABO*   Semi-Lagrangian scheme.
 !                VAlues at the BOundaries: Upper and lower extrapolations.
 
@@ -113,6 +116,11 @@ INTEGER(KIND=JPIM) :: JGFL, ISLB1GFL9, ISLB1GFLP9, JLON
 !              --------------------------------------------------------
 
 ! * P[X]RL0 and P[X]RL9 for [X]=U,V,W:
+
+init_stack ()
+
+
+
 DO JLON = KIDIA, KFDIA
 PB1(JLON,YRPTRSLB1%MSLB1UR0) = 0.0_JPRB
 ENDDO

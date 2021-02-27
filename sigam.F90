@@ -1,5 +1,8 @@
 SUBROUTINE SIGAM(KIDIA,KFDIA,KLON,KFLEVG,PD,PT,PSP,KSTPT,KSTSZ,PSTACK)
 
+
+#include "temp.h"
+
 !**** *SIGAM* - Solve hydrostatic operator in semi-implicit
 
 !     Purpose.
@@ -80,13 +83,20 @@ INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
 REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
-REAL(KIND=JPRB) :: ZSPHIX(KLON,0:KFLEVG)
+
+temp (REAL(KIND=JPRB), ZSPHIX, (KLON,0:KFLEVG))
 INTEGER(KIND=JPIM) :: JLEV, JLON
 
 !     ------------------------------------------------------------------
 
 !*       1.    SUM GEOPOTENTIAL, COMPUTES P AND PUT IT IN PD.
 !              ----------------------------------------------
+
+init_stack ()
+
+alloc (ZSPHIX)
+
+
 
 DO JLON=KIDIA,KFDIA
   ZSPHIX(JLON,KFLEVG)=0.0_JPRB

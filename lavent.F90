@@ -2,6 +2,9 @@
 SUBROUTINE LAVENT(KLON, YDGMV,KIDIA,KFDIA,KSETTLOFF,LD2TLFF1,PVCRS0,PRDLR0,PDTS2,PRDELP,PEVEL,PATND,&
  & PGMV,PB1,PB2,PWRL9,KSTPT,KSTSZ,PSTACK)
 
+
+#include "temp.h"
+
 !**** *LAVENT*   Semi-Lagrangian scheme.
 !                Computation of wind components necessary 
 !                to find the SL trajectory.
@@ -142,7 +145,8 @@ REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 INTEGER(KIND=JPIM) ::JLON, JLEV
 INTEGER(KIND=JPIM) :: ISLB1U9, ISLB1V9
-REAL(KIND=JPRB) :: ZWRL0(KLON,YRDIMV%NFLEVG)
+
+temp (REAL(KIND=JPRB), ZWRL0, (KLON,YRDIMV%NFLEVG))
 REAL(KIND=JPRB) :: ZUSA, ZMAGW0, ZMAGW9, ZWJUMP, ZWAVMAG
 LOGICAL :: LLCT, LLSETTLST, LLNESCT, LLSETTLSV, LLNESCV
 
@@ -154,6 +158,12 @@ LOGICAL :: LLCT, LLSETTLST, LLNESCT, LLSETTLSV, LLNESCV
 
 
 !     ------------------------------------------------------------------
+
+init_stack ()
+
+alloc (ZWRL0)
+
+
 
 ZUSA=1.0_JPRB/RA
 

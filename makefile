@@ -4,7 +4,7 @@ FRTFLAGS = -convert big_endian -assume byterecl -traceback -qopenmp -qopenmp-thr
 OPT_FRTFLAGS = -fp-model source -g -O0 -ip -debug full
 
 #FC = /home/gmap/mrpm/marguina/install/gmkpack_support/wrapper/I161150/ifort $(FRTFLAGS) $(OPT_FRTFLAGS)
-FC = pgf90 -DCPU  -mp -byteswapio -Mlarge_arrays -fast
+FC = pgf90 -mp -byteswapio -Mlarge_arrays -O0 -g -DUSE_STACK
 
 all: wrap_lacdyn.x
 

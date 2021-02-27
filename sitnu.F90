@@ -1,5 +1,8 @@
 SUBROUTINE SITNU(KIDIA,KFDIA,KLON,KFLEVG,PD,PT,PSP,KSTPT,KSTSZ,PSTACK)
 
+
+#include "temp.h"
+
 !**** *SITNU*   - Continuity equation for semi-implicit.
 
 !     Purpose.
@@ -81,8 +84,15 @@ INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
 REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
-REAL(KIND=JPRB) :: ZSDIVX(KLON,0:YRDIMV%NFLEVG)
+
+temp (REAL(KIND=JPRB), ZSDIVX, (KLON,0:YRDIMV%NFLEVG))
 INTEGER(KIND=JPIM) :: JLEV, JLON
+
+init_stack ()
+
+alloc (ZSDIVX)
+
+
 
 
 DO JLON=KIDIA,KFDIA

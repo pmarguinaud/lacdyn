@@ -4,6 +4,9 @@ SUBROUTINE LASURE(&
  ! ----- OUTPUT --------------------------------------------------------------
  & PDTS2,PBT,LD2TLFF1,PBDT,PREDIV,PESGP,PESGM,KSTPT,KSTSZ,PSTACK )  
 
+
+#include "temp.h"
+
 !**** *LASURE*   Semi-Lagrangian scheme.
 !                Set-up for other subroutines called by LACDYN.
 
@@ -119,6 +122,11 @@ INTEGER(KIND=JPIM) ::  JLON
 !              ----------------------------
 
 !     * Time step.
+
+init_stack ()
+
+
+
 
 PDTS2 = 0.5_JPRB*PDT
 PBT = PDTS2*PBETADT

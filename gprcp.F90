@@ -1,6 +1,9 @@
 SUBROUTINE GPRCP(KLON,KIDIA,KFDIA,KFLEV,KSTPT,KSTSZ,PSTACK,PQ,PQI,PQL,PQR,PQS,PQG,&
  & PCP,PR,PKAP,PGFL,KGFLTYP)
 
+
+#include "temp.h"
+
 !**** *GPRCP* - Computes Cp, R and R/Cp from Q
 
 !     Purpose.
@@ -92,8 +95,10 @@ INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
 REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
-REAL(KIND=JPRB) :: ZCP(KLON,KFLEV)
-REAL(KIND=JPRB) :: ZR(KLON,KFLEV)
+
+temp (REAL(KIND=JPRB), ZCP, (KLON,KFLEV))
+
+temp (REAL(KIND=JPRB), ZR, (KLON,KFLEV))
 REAL(KIND=JPRB) :: ZGFL_R(YGFL%NUMFLDS), ZGFL_CP(YGFL%NUMFLDS)
 REAL(KIND=JPRB) :: ZGFL_X(YGFL%NUMFLDS), ZX
 
@@ -113,6 +118,13 @@ LOGICAL :: LLGFL,LLQ,LLQL,LLQI,LLQR,LLQS,LLQG,LLKAP, LLR, LLCP
 
 !*       1.    COMPUTES R AND CP AND KAPPA.
 !              ----------------------------
+
+init_stack ()
+
+alloc (ZCP)
+alloc (ZR)
+
+
 
 LLGFL = PRESENT(PGFL)
 IF(.NOT. LLGFL) THEN
