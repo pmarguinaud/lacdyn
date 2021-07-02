@@ -2,7 +2,7 @@ SUBROUTINE LASURE(&
  ! ----- INPUT ---------------------------------------------------------------
  & YRPHY, YRGEM, YRDYN, YRDIM, KLON, KIDIA,KFDIA,PBETADT,PDT,YDGSGEOM,&
  ! ----- OUTPUT --------------------------------------------------------------
- & PDTS2,PBT,LD2TLFF1,PBDT,PREDIV,PESGP,PESGM,KSTPT,KSTSZ,PSTACK )  
+ & PDTS2,PBT,LD2TLFF1,PBDT,PREDIV,PESGP,PESGM )  
 
 
 
