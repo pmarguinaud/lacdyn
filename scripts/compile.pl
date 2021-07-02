@@ -75,15 +75,15 @@ sub preProcessIfNewer
  
       if ($opts{'kernels'})
         {
-          &Blocks::exchangeJlonJlevLoops ($d);
-          &Blocks::addKernelDirectives ($d);
+#         &Blocks::exchangeJlonJlevLoops ($d);
+#         &Blocks::addKernelDirectives ($d);
         }
       else
         {
           if ($opts{'single-block'})
             {
-              &SingleBlock::hoistJlonLoops ($d);
-              &SingleBlock::addParallelLoopDirectives ($d);
+#             &SingleBlock::hoistJlonLoops ($d);
+#             &SingleBlock::addParallelLoopDirectives ($d);
             }
           else
             {
@@ -102,7 +102,7 @@ sub preProcessIfNewer
 }
 
 my @opts_f = qw (update compile kernels single-block);
-my @opts_s = qw (arch);
+my @opts_s = qw (arch bin);
 
 &GetOptions
 (
@@ -110,8 +110,8 @@ my @opts_s = qw (arch);
   map ({ ("$_=s", \$opts{$_}) } @opts_s),
 );
 
-my @compute = map { &basename ($_) } <compute/*.F90>;
-my @support = map { &basename ($_) } <support/*.F90>;
+my @compute = map { &basename ($_) } (<compute/*.F90>, <compute/*.h>);
+my @support = map { &basename ($_) } (<support/*.F90>, <support/*.h>);
 
 &mkpath ("compile.$opts{arch}");
 
@@ -136,7 +136,7 @@ if ($opts{update})
 
 if ($opts{compile})
   {
-    system ('make -j4 main.x') and die;
+    system ("make -j4 $opts{bin}") and die;
   }
 
 

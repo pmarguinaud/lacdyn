@@ -102,14 +102,12 @@ sub addBlocks
           $sslt->appendChild (&t (','));
           $sslt->appendChild (&n ('<shape-spec><upper-bound><named-E><N><n>KGPBLKS</n></N></named-E></upper-bound></shape-spec>'));
         }
-     
   
       # Find DO loops with JLON variable
   
       my @do = &f ('.//f:do-construct[./f:do-stmt/f:do-V/f:named-E/f:N/f:n/text ()="JLON"]', $pu);
 
       my %lh;
-  
   
       # For each JLON DO loop, find the outermost loop enclosing this JLON DO loop
   
@@ -155,13 +153,24 @@ EOF
   
           # Add JBLK index to variables
   
-          my @elt = (&f ('.//f:element-LT[./f:element/f:named-E/f:N/f:n/text ()="JLON"]', $lh),
-                     &f ('.//f:section-subscript-LT[./f:section-subscript/f:named-E/f:N/f:n/text ()="JLON"]', $lh));
 
-          for my $elt (@elt)
+          for my $elt (&f ('.//f:element-LT[./f:element/f:named-E/f:N/f:n/text ()="JLON"]', $lh))
             {
               $elt->appendChild (&t (','));
               $elt->appendChild (&n ('<element><named-E><N><n>JBLK</n></N></named-E></element>'));
+            }
+  
+          # Is this one necessary ?
+          for my $elt (&f ('.//f:section-subscript-LT[./f:section-subscript/f:named-E/f:N/f:n/text ()="JLON"]', $lh))
+            {
+              $elt->appendChild (&t (','));
+              $elt->appendChild (&n ('<section-subscript><named-E><N><n>JBLK</n></N></named-E></section-subscript>'));
+            }
+
+          for my $elt (&f ('.//f:section-subscript-LT[./f:section-subscript/f:lower-bound/f:named-E/f:N/f:n/text ()="JLON"]', $lh))
+            {
+              $elt->appendChild (&t (','));
+              $elt->appendChild (&n ('<section-subscript><lower-bound><named-E><N><n>JBLK</n></N></named-E></lower-bound></section-subscript>'));
             }
   
           # Remove innermost JLON DO loops
