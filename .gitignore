@@ -10,3 +10,4 @@
 *.x
 slurm-*.out
 *.ok
+*.qdrep
