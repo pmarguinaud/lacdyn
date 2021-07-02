@@ -95,7 +95,11 @@ sub addBlocks
   
   
       # Add JBLK dimension to arrays whose first dimension is KLON
-      my @sslt = &f ('.//f:EN-decl/f:array-spec/f:shape-spec-LT[./f:shape-spec/f:upper-bound/f:named-E/f:N/f:n/text ()="KLON"]', $pu);
+      my @sslt = map 
+                   {
+                     &f ('.//f:EN-decl/f:array-spec/f:shape-spec-LT[./f:shape-spec/f:upper-bound/f:named-E[string (.)="?"]]', $_, $pu);
+                   }
+                 (qw (KLON YRDIM%NPROMVC YRDIM%NPROMDLW YRDIM%NPROMDLR YRDIM%NPROMNH));
   
       for my $sslt (@sslt)
         {

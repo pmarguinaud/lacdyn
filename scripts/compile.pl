@@ -61,6 +61,8 @@ sub preProcessIfNewer
       my $d = &Fxtran::fxtran (location => $f1);
       &saveToFile ($d, "tmp/$f2");
 
+=pod
+
       &Inline::inlineContainedSubroutines ($d);
       &saveToFile ($d, "tmp/inlineContainedSubroutines/$f2");
 
@@ -87,13 +89,16 @@ sub preProcessIfNewer
             }
           else
             {
-              &Blocks::addParallelLoopDirectives ($d);
+#             &Blocks::addParallelLoopDirectives ($d);
             }
         }
 
 
-      &Blocks::addDataDirectives ($d);
-      &saveToFile ($d, "tmp/addDirectives/$f2");
+#     &Blocks::addDataDirectives ($d);
+#     &saveToFile ($d, "tmp/addDirectives/$f2");
+#
+
+=cut
 
       'FileHandle'->new (">$f2")->print ($d->textContent ());
 
