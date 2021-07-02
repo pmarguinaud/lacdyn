@@ -1,9 +1,7 @@
-!$acc routine(LASSIE) seq
 SUBROUTINE LASSIE(YRVFE, YRVETA, YGFL, YRDYN, YRDIMV, YRDIM, KLON, YDGMV,KIDIA,KFDIA,PRCORI,PGMV,PGMVS,PGFL,&
  & PSDIV0,PSDIV9,PTOD0,PTOD9,PGAGT0L,PGAGT0M,PGAGT9L,PGAGT9M,KSTPT,KSTSZ,PSTACK)  
 
 
-#include "temp.h"
 
 !**** *LASSIE*   Semi-Lagrangian scheme.
 !                Computation of linear terms used in the semi-implicit scheme. 
@@ -120,7 +118,7 @@ REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
 
-temp (REAL(KIND=JPRB), ZR9, (KLON,YRDIMV%NFLEVG))
+REAL(KIND=JPRB) :: ZR9 (KLON,YRDIMV%NFLEVG)
 INTEGER(KIND=JPIM) :: JLEV, JLON
 
 
@@ -143,9 +141,7 @@ INTEGER(KIND=JPIM) :: JLEV, JLON
 !   - Computation of Nu*D (SI term for continuity equation)
 !     and Tau*D (SI term for temperature equation).
 
-init_stack ()
 
-alloc (ZR9)
 
 
 CALL SITNU(YRVFE,YRVETA,YRDYN,YRDIMV,KIDIA,KFDIA,KLON,YRDIMV%NFLEVG,&

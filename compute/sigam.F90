@@ -1,8 +1,6 @@
-!$acc routine(SIGAM) seq
 SUBROUTINE SIGAM(YRVFE, YRVETA, YRDYN, KIDIA,KFDIA,KLON,KFLEVG,PD,PT,PSP,KSTPT,KSTSZ,PSTACK)
 
 
-#include "temp.h"
 
 !**** *SIGAM* - Solve hydrostatic operator in semi-implicit
 
@@ -90,7 +88,7 @@ REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 #include "abor1.intfb.h"
 
 
-temp (REAL(KIND=JPRB), ZSPHIX, (KLON,0:KFLEVG))
+REAL(KIND=JPRB) :: ZSPHIX (KLON,0:KFLEVG)
 INTEGER(KIND=JPIM) :: JLEV, JLON
 
 !     ------------------------------------------------------------------
@@ -98,9 +96,7 @@ INTEGER(KIND=JPIM) :: JLEV, JLON
 !*       1.    SUM GEOPOTENTIAL, COMPUTES P AND PUT IT IN PD.
 !              ----------------------------------------------
 
-init_stack ()
 
-alloc (ZSPHIX)
 
 
 

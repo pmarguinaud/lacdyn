@@ -1,9 +1,7 @@
-!$acc routine(LAVABO) seq
 SUBROUTINE LAVABO(YGFL, YRDYN, YRDIMV, YRDIM, &
                 & KLON,KIDIA,KFDIA,LD2TLFF1,PB1,KSTPT,KSTSZ,PSTACK)
 
 
-#include "temp.h"
 
 !**** *LAVABO*   Semi-Lagrangian scheme.
 !                VAlues at the BOundaries: Upper and lower extrapolations.
@@ -123,7 +121,6 @@ INTEGER(KIND=JPIM) :: JGFL, ISLB1GFL9, ISLB1GFLP9, JLON
 
 ! * P[X]RL0 and P[X]RL9 for [X]=U,V,W:
 
-init_stack ()
 
 
 

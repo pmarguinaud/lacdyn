@@ -1,4 +1,3 @@
-!$acc routine(LASURE) seq
 SUBROUTINE LASURE(&
  ! ----- INPUT ---------------------------------------------------------------
  & YRPHY, YRGEM, YRDYN, YRDIM, KLON, KIDIA,KFDIA,PBETADT,PDT,YDGSGEOM,&
@@ -6,7 +5,6 @@ SUBROUTINE LASURE(&
  & PDTS2,PBT,LD2TLFF1,PBDT,PREDIV,PESGP,PESGM,KSTPT,KSTSZ,PSTACK )  
 
 
-#include "temp.h"
 
 !**** *LASURE*   Semi-Lagrangian scheme.
 !                Set-up for other subroutines called by LACDYN.
@@ -128,7 +126,6 @@ INTEGER(KIND=JPIM) ::  JLON
 
 !     * Time step.
 
-init_stack ()
 
 
 

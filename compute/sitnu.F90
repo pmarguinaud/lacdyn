@@ -1,8 +1,6 @@
-!$acc routine(SITNU) seq
 SUBROUTINE SITNU(YRVFE, YRVETA, YRDYN, YRDIMV, KIDIA,KFDIA,KLON,KFLEVG,PD,PT,PSP,KSTPT,KSTSZ,PSTACK)
 
 
-#include "temp.h"
 
 !**** *SITNU*   - Continuity equation for semi-implicit.
 
@@ -92,12 +90,10 @@ REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 #include "abor1.intfb.h"
 
 
-temp (REAL(KIND=JPRB), ZSDIVX, (KLON,0:YRDIMV%NFLEVG))
+REAL(KIND=JPRB) :: ZSDIVX (KLON,0:YRDIMV%NFLEVG)
 INTEGER(KIND=JPIM) :: JLEV, JLON
 
-init_stack ()
 
-alloc (ZSDIVX)
 
 
 

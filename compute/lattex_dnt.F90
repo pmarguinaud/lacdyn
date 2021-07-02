@@ -1,11 +1,9 @@
-!$acc routine(LATTEX_DNT) seq
 SUBROUTINE LATTEX_DNT(YRLDDH, YRDYN, YRDIMV, YRDIM, &
  & KLON, KIDIA,KFDIA,LDSETTLS,KXLAG,PESGP,PESGM,PXT0,PXT9,PMOY1X,&
  & PXSI,PXNLT9,PXT1,PXL0,PXL9,PXLF9,PCXNLT9,&
  & PSIDDHXT1,PSIDDHXT9,PSIDDHXL0,KSTPT,KSTSZ,PSTACK,LDNESC)
 
 
-#include "temp.h"
 
 !------------------------------------------------------------------------------
 ! LATTEX_DNT - Semi-Lagrangian scheme.
@@ -133,9 +131,9 @@ INTEGER(KIND=JPIM) :: JLEV,JLON
 
 !     * ZXNLT0 (resp. ZXNLT1) the non linear term at t (resp. t+dt).
 
-temp (REAL(KIND=JPRB), ZXNLT1, (KLON))
+REAL(KIND=JPRB) :: ZXNLT1 (KLON)
 
-temp (REAL(KIND=JPRB), ZXNLT0, (KLON))
+REAL(KIND=JPRB) :: ZXNLT0 (KLON)
 REAL(KIND=JPRB) :: ZXIDT0,ZXIDT9,ZXIGP
 
 LOGICAL :: LLCT,LLNESC
@@ -156,10 +154,7 @@ LOGICAL :: LLCT,LLNESC
 !*      1. AUXILIARY VARIABLES.
 !       -----------------------
 
-init_stack ()
 
-alloc (ZXNLT1)
-alloc (ZXNLT0)
 
 
 

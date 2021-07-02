@@ -1,4 +1,3 @@
-!$acc routine(LATTEX) seq
 SUBROUTINE LATTEX(YGFL, YRVAB, YRSTA, YRMDDH, YRLDDH, YRDYN, YRDIMV, YRDIM, KLON, YDGMV, &
  ! --- INPUT --------------------------------------------------
  & KIDIA,KFDIA,PDTS2,PBT,PBDT,PESGP,PESGM,&
@@ -14,7 +13,6 @@ SUBROUTINE LATTEX(YGFL, YRVAB, YRSTA, YRMDDH, YRLDDH, YRDYN, YRDIMV, YRDIM, KLON
  & PB2,KSTPT,KSTSZ,PSTACK)
 
 
-#include "temp.h"
 
 !**** *LATTEX*   Semi-Lagrangian scheme.
 !                Computation of the t and t-dt useful quantities
@@ -255,16 +253,16 @@ INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
 REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
-temp (REAL(KIND=JPRB), ZWT0, (KLON))
+REAL(KIND=JPRB) :: ZWT0 (KLON)
 REAL(KIND=JPRB)               :: ZMBF(YRDIMV%NFLEVG)
 REAL(KIND=JPRB)               :: ZMDELB(YRDIMV%NFLEVG)
 
-temp (REAL(KIND=JPRB), ZMOY1U, (KLON,YRDIMV%NFLEVG))
+REAL(KIND=JPRB) :: ZMOY1U (KLON,YRDIMV%NFLEVG)
 
-temp (REAL(KIND=JPRB), ZMOY1V, (KLON,YRDIMV%NFLEVG))
+REAL(KIND=JPRB) :: ZMOY1V (KLON,YRDIMV%NFLEVG)
 
 
-temp (REAL(KIND=JPRB), ZMOY1T, (KLON,YRDIMV%NFLEVG))
+REAL(KIND=JPRB) :: ZMOY1T (KLON,YRDIMV%NFLEVG)
 INTEGER(KIND=JPIM) :: IPX, IPXSP, IPQ
 INTEGER(KIND=JPIM) :: JLEV, JGFL, JLON
 
@@ -293,12 +291,7 @@ REAL(KIND=JPRB) :: ZCMSLP
 
 !       1.2  Scalar initialisations:
 
-init_stack ()
 
-alloc (ZWT0)
-alloc (ZMOY1U)
-alloc (ZMOY1V)
-alloc (ZMOY1T)
 
 
 
