@@ -9,3 +9,4 @@
 *.COUNT
 *.x
 slurm-*.out
+*.ok

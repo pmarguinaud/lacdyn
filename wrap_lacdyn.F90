@@ -5,6 +5,24 @@ USE YOMGMV,    ONLY : TGMV
 USE YOMOROG,   ONLY : TOROG
 USE YOMGSGEOM, ONLY : TGSGEOM
 USE YOMDIMV  , ONLY : YRDIMV
+
+USE COPY_TDIM_MOD
+USE COPY_TDIMV_MOD
+USE COPY_TDYN_MOD
+USE COPY_TGEM_MOD
+USE COPY_TGMV_MOD
+USE COPY_TGSGEOM_MOD
+USE COPY_TLDDH_MOD
+USE COPY_TMDDH_MOD
+USE COPY_TOROG_MOD
+USE COPY_TPARAR_MOD
+USE COPY_TPHY_MOD
+USE COPY_TSTA_MOD
+USE COPY_TVAB_MOD
+USE COPY_TVETA_MOD
+USE COPY_TVFE_MOD
+USE COPY_TYPE_GFLD_MOD
+
 USE LOAD_MOD
 #ifdef USE_ACC
 USE CUDAFOR
@@ -216,9 +234,56 @@ PRINT *, "-- RUN"
 CALL CUDAPROFILERSTART 
 #endif
 
+!$acc enter data create (YRVFE)     
+CALL COPY (YRVFE)     
+!$acc enter data create (YRLDDH)    
+CALL COPY (YRLDDH)    
+!$acc enter data create (YRSTA)     
+CALL COPY (YRSTA)     
+!$acc enter data create (YRVAB)     
+CALL COPY (YRVAB)     
+!$acc enter data create (YRPARAR)   
+CALL COPY (YRPARAR)   
+!$acc enter data create (YRVETA)    
+CALL COPY (YRVETA)    
+!$acc enter data create (YRGEM)     
+CALL COPY (YRGEM)     
+!$acc enter data create (YRPHY)     
+CALL COPY (YRPHY)     
+!$acc enter data create (YRDIM)     
+CALL COPY (YRDIM)     
+!$acc enter data create (YRDIMV)    
+CALL COPY (YRDIMV)    
+!$acc enter data create (YRDYN)     
+CALL COPY (YRDYN)     
+!$acc enter data create (YRMDDH)    
+CALL COPY (YRMDDH)    
+!$acc enter data create (YGFL)      
+CALL COPY (YGFL)      
+!$acc enter data create (YDGMV_ALL(1))     
+CALL COPY (YDGMV_ALL(1))     
+
+!$acc enter data create (YDGSGEOM_ALL)
+DO IBL = 1, SIZE (YDGSGEOM_ALL)
+  CALL COPY (YDGSGEOM_ALL (IBL))
+ENDDO
+
+!$acc enter data create (YDOROG_ALL)
+DO IBL = 1, SIZE (YDOROG_ALL)
+  CALL COPY (YDOROG_ALL (IBL))
+ENDDO
+
 DO ITIME = 1, NTIMES
 
 #ifdef USE_ACC
+
+!$acc data &
+!$acc copyin  (PSLHDA_ALL, PSLHDD0_ALL, POROGL_ALL, POROGM_ALL, PVCRSSA9F_ALL, PNHXT9_ALL, PVCRS0_ALL, PVCW0F_ALL, PWDLW0F_ALL, PRDLR0_ALL,            &
+!$acc          PRDLR9_ALL, PNHXT0_ALL, PRES0_ALL, PRDELP0_ALL, PCTY0_ALL, PUVH0_ALL, PATND_ALL, PDBBC_ALL, PRDPHI_ALL, PGWT0_ALL, PGWT9_ALL, PGFL_ALL) &
+!$acc copy    (PGMV_ALL, PGMVS_ALL, PB1_ALL, PB2_ALL, PGMVT1_ALL, PGMVT1S_ALL, PGWS_ALL, PGMVTNDSI_ALL) &
+!$acc copyout (PWRL95_ALL, KSETTLOFF_ALL) &
+!$acc create  (PSTACK_ALL) &
+!$acc present (YRVFE, YRLDDH, YRSTA, YRVAB, YRPARAR, YRVETA, YRGEM, YRPHY, YGFL, YRMDDH, YRDYN, YRDIMV, YRDIM, YDGMV_ALL, YDGSGEOM_ALL, YDOROG_ALL)
 
 !$acc parallel loop gang vector private (IBL, JJ, JIDIA, JFDIA) collapse (2)
 
@@ -247,6 +312,8 @@ DO IBL = 1, ICOUNT
 ENDDO
 
 !$acc end parallel loop 
+
+!$acc end data
 
 #else
 
