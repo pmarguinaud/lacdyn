@@ -11,5 +11,10 @@ set -x
 
 cd /gpfswork/rech/jau/ufh62jk/lacdyn/openacc-notmanaged
 
-#./wrap_lacdyn.x --case t0031 --diff --heapsize 100
-nsys profile -f true -o lacdyn.qdrep ./wrap_lacdyn.x --case t1198 --heapsize 100 # --diff --diff-block-list 1 
+hostname
+
+make wrap_lacdyn.x
+
+ ./wrap_lacdyn.x --case t0031 --diff --heapsize 100
+# nsys profile -f true -o lacdyn.qdrep ./wrap_lacdyn.x --case t1198 --heapsize 100 # --diff --diff-block-list 1 
+#./wrap_lacdyn.x --case t1198 --heapsize 100 # --diff --diff-block-list 1 
