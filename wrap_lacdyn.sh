@@ -8,6 +8,7 @@
 module load nvidia-compilers/21.5
 
 set -x
+set -e
 
 cd /gpfswork/rech/jau/ufh62jk/lacdyn/openacc-kernels
 
@@ -15,8 +16,6 @@ hostname
 
 
 ./scripts/compile.pl --update --compile --bin wrap_lacdyn.x --arch cpu
-
-make wrap_lacdyn.x
 
  ./compile.cpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100
 # nsys profile -f true -o lacdyn.qdrep ./wrap_lacdyn.x --case t1198 --heapsize 100 # --diff --diff-block-list 1 

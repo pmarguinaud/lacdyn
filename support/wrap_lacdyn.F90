@@ -269,8 +269,6 @@ ENDDO
 
 DO ITIME = 1, NTIMES
 
-#ifdef USE_ACC
-
     TSD = OMP_GET_WTIME ()
 
 !$acc data &
@@ -314,11 +312,6 @@ ENDDO
 
     ZTC = ZTC + (TEC - TSC)
     ZTD = ZTD + (TED - TSD)
-
-ENDDO
-!$OMP END PARALLEL DO
-
-#endif
 
 ENDDO
 
