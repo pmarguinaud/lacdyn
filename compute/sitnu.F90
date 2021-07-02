@@ -82,9 +82,6 @@ REAL(KIND=JPRB)   ,INTENT(IN)    :: PD(KLON,KFLEVG)
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PT(KLON,KFLEVG)
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PSP(KLON) 
 
-INTEGER(KIND=JPIM),INTENT(IN)    :: KSTSZ
-INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
-REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
 #include "abor1.intfb.h"

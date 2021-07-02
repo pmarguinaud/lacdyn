@@ -106,9 +106,6 @@ REAL(KIND=JPRB)   ,INTENT(OUT)   :: PREDIV(KLON)
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PESGP 
 REAL(KIND=JPRB)   ,INTENT(OUT)   :: PESGM 
 
-INTEGER(KIND=JPIM),INTENT(IN)    :: KSTSZ
-INTEGER(KIND=JPIM),INTENT(IN)    :: KSTPT
-REAL (KIND=JPRB)   ,INTENT(INOUT) :: PSTACK (KSTSZ)
 !     ------------------------------------------------------------------
 
 INTEGER(KIND=JPIM) ::  JLON
