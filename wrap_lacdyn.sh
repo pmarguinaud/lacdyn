@@ -17,6 +17,9 @@ hostname
 
 ./scripts/compile.pl --update --compile --bin wrap_lacdyn.x --arch cpu
 
- ./compile.cpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100
+ ./compile.cpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100 > diff.txt
+
+diff diff.ref.txt diff.txt
+
 # nsys profile -f true -o lacdyn.qdrep ./wrap_lacdyn.x --case t1198 --heapsize 100 # --diff --diff-block-list 1 
 # nvprof  --print-gpu-trace ./wrap_lacdyn.x --case t1198 --heapsize 100 --diff 

@@ -1259,6 +1259,13 @@ sub intfb
   for my $pu (@pu)
     {
 
+       # Strip BLOCKs
+      
+       for (&f ('.//f:block-construct', $pu))
+         {
+           $_->unbindNode ();
+         }
+   
       for (&f ('.//f:program-unit', $pu))
         {
           $_->unbindNode ();

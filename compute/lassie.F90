@@ -155,12 +155,12 @@ IF (.NOT.LTWOTL) THEN
   ! - Computation of Nu*D (SI term for continuity equation)
   !   and Tau*D (SI term for temperature equation).
   CALL SITNU(YRVFE,YRVETA,YRDYN,YRDIMV,KIDIA,KFDIA,KLON,YRDIMV%NFLEVG,&
-           &PGMV(1,1,YDGMV%YT9%MDIV),PTOD9,PSDIV9)
+           &PGMV(:,:,YDGMV%YT9%MDIV),PTOD9,PSDIV9)
   ! - Computation of Nabla(Gamma*T+Mu*Pi) (SI term for momentum equation).
   CALL SIGAM(YRVFE,YRVETA,YRDYN,KIDIA,KFDIA,KLON,YRDIMV%NFLEVG,PGAGT9L,&
-            &PGMV(1,1,YDGMV%YT9%MTL),PGMVS(1,YDGMV%YT9%MSPL))
+            &PGMV(:,:,YDGMV%YT9%MTL),PGMVS(:,YDGMV%YT9%MSPL))
   CALL SIGAM(YRVFE,YRVETA,YRDYN,KIDIA,KFDIA,KLON,YRDIMV%NFLEVG,PGAGT9M,&
-            &PGMV(1,1,YDGMV%YT9%MTM),PGMVS(1,YDGMV%YT9%MSPM))
+            &PGMV(:,:,YDGMV%YT9%MTM),PGMVS(:,YDGMV%YT9%MSPM))
 ENDIF
 
 ! * For "spectral RT" option, adjust semi-implicit term (Tau*D) in
