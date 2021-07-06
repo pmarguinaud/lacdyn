@@ -47,6 +47,14 @@ USE XRD_GETOPTIONS
 
 IMPLICIT NONE
 
+INTERFACE CPRS
+  PROCEDURE CPRS1, CPRS2, CPRS3, CPRSI1, CPRS_TOROG, CPRS_GSGEOM
+END INTERFACE
+
+INTERFACE REALO
+  PROCEDURE REALOX1, REALOX2, REALOX3, REALOI1, REALO_TOROG, REALO_GSGEOM
+END INTERFACE
+
 INTERFACE SETALL
   PROCEDURE SETALLI1
   PROCEDURE SETALLI2
@@ -106,6 +114,41 @@ REAL(KIND=JPRB)   , POINTER      :: PGWS_ALL(:,:)
 REAL(KIND=JPRB)   , POINTER      :: PGMVTNDSI_ALL(:,:,:,:)
 REAL(KIND=JPRB)   , POINTER      :: PWRL95_ALL(:,:,:)
 
+INTEGER(KIND=JPIM), POINTER      :: KSETTLOFF_(:)
+REAL(KIND=JPRB)   , POINTER      :: PSLHDA_(:)
+REAL(KIND=JPRB)   , POINTER      :: PSLHDD0_(:)
+TYPE(TGSGEOM)                    :: YDGSGEOM_
+TYPE(TOROG)                      :: YDOROG_
+REAL(KIND=JPRB)   , POINTER      :: POROGL_(:)
+REAL(KIND=JPRB)   , POINTER      :: POROGM_(:) 
+REAL(KIND=JPRB)   , POINTER      :: PVCRSSA9F_(:,:) 
+REAL(KIND=JPRB)   , POINTER      :: PNHXT9_(:,:) 
+REAL(KIND=JPRB)   , POINTER      :: PVCRS0_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PVCW0F_(:,:) 
+REAL(KIND=JPRB)   , POINTER      :: PWDLW0F_(:,:) 
+REAL(KIND=JPRB)   , POINTER      :: PRDLR0_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PRDLR9_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PNHXT0_(:,:) 
+REAL(KIND=JPRB)   , POINTER      :: PRES0_(:,:) 
+REAL(KIND=JPRB)   , POINTER      :: PRDELP0_(:,:) 
+REAL(KIND=JPRB)   , POINTER      :: PCTY0_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PUVH0_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PATND_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PDBBC_(:)
+REAL(KIND=JPRB)   , POINTER      :: PRDPHI_(:,:)
+REAL(KIND=JPRB)   , POINTER      :: PGWT0_(:,:)
+REAL(KIND=JPRB)   , POINTER      :: PGWT9_(:,:)
+REAL(KIND=JPRB)   , POINTER      :: PGFL_(:,:,:) 
+REAL(KIND=JPRB)   , POINTER      :: PGMV_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PGMVS_(:,:)
+REAL(KIND=JPRB)   , POINTER      :: PB1_(:,:)
+REAL(KIND=JPRB)   , POINTER      :: PB2_(:,:)
+REAL(KIND=JPRB)   , POINTER      :: PGMVT1_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PGMVT1S_(:,:)
+REAL(KIND=JPRB)   , POINTER      :: PGWS_(:)
+REAL(KIND=JPRB)   , POINTER      :: PGMVTNDSI_(:,:,:)
+REAL(KIND=JPRB)   , POINTER      :: PWRL95_(:,:)
+
 
 INTEGER :: IBL, ICOUNT, KLON, JJ, JIDIA, JFDIA
 INTEGER :: ICOUNT1, KLON1
@@ -118,6 +161,7 @@ INTEGER (KIND=4) :: HEAPSIZE4
 INTEGER (KIND=4) :: ISTAT
 INTEGER :: NTIMES, ITIME
 REAL(KIND=8) :: TSC, TEC, TSD, TED, ZTC, ZTD
+LOGICAL :: LLSINGLEBLOCK
 
 #include "lacdyn.intfb.h"
 
@@ -134,6 +178,8 @@ HEAPSIZE4 = 0
 CALL GETOPTION ("--heapsize", HEAPSIZE4)
 NTIMES = 1
 CALL GETOPTION ("--times", NTIMES)
+LLSINGLEBLOCK = .FALSE.
+CALL GETOPTION ("--single-block", LLSINGLEBLOCK)
 CALL CHECKOPTIONS ()
 
 #ifdef USE_ACC
@@ -267,6 +313,8 @@ DO IBL = 1, SIZE (YDOROG_ALL)
   CALL COPY (YDOROG_ALL (IBL))
 ENDDO
 
+IF (.NOT. LLSINGLEBLOCK) THEN
+
 DO ITIME = 1, NTIMES
 
     TSD = OMP_GET_WTIME ()
@@ -279,8 +327,6 @@ DO ITIME = 1, NTIMES
 !$acc present (YRVFE, YRLDDH, YRSTA, YRVAB, YRPARAR, YRVETA, YRGEM, YRPHY, YGFL, YRMDDH, YRDYN, YRDIMV, YRDIM, YDGMV_ALL(1), YDGSGEOM_ALL, YDOROG_ALL)
 
     TSC = OMP_GET_WTIME ()
-
-!$acc parallel loop gang vector private (IBL, JJ, JIDIA, JFDIA) collapse (2)
 
 DO IBL = 1, ICOUNT
 
@@ -302,9 +348,94 @@ DO IBL = 1, ICOUNT
 
 ENDDO
 
-!$acc end parallel loop 
+    TEC = OMP_GET_WTIME ()
+
+!$acc end data
+
+    TED = OMP_GET_WTIME ()
+
+    ZTC = ZTC + (TEC - TSC)
+    ZTD = ZTD + (TED - TSD)
+
+
+ENDDO
+
+PRINT *, " ZTD = ", ZTD, ZTD / REAL (ICOUNT1 * KLON, JPRB)
+PRINT *, " ZTC = ", ZTC, ZTC / REAL (ICOUNT1 * KLON, JPRB)
+
+ELSE
+
+
+#define realo(x) CALL REALO (x##_ALL, x##_)
+
+realo (KSETTLOFF); realo (PSLHDA); realo (PSLHDD0); realo (YDGSGEOM);
+realo (YDOROG); realo (POROGL); realo (POROGM); realo (PVCRSSA9F);
+realo (PNHXT9); realo (PVCRS0); realo (PVCW0F); realo (PWDLW0F);
+realo (PRDLR0); realo (PRDLR9); realo (PNHXT0); realo (PRES0);
+realo (PRDELP0); realo (PCTY0); realo (PUVH0); realo (PATND);
+realo (PDBBC); realo (PRDPHI); realo (PGWT0); realo (PGWT9);
+realo (PGFL); realo (PGMV); realo (PGMVS); realo (PB1); realo (PB2);
+realo (PGMVT1); realo (PGMVT1S); realo (PGWS); realo (PGMVTNDSI);
+realo (PWRL95);
+
+#undef realo
+
+
+!$acc enter data create (YDGSGEOM_)
+CALL COPY (YDGSGEOM_)
+CALL CPRS (YDGSGEOM_ALL, YDGSGEOM_, .TRUE.)
+
+!$acc enter data create (YDOROG_)
+CALL COPY (YDOROG_)
+CALL CPRS (YDOROG_ALL, YDOROG_, .TRUE.)
+
+DO ITIME = 1, NTIMES
+
+    TSD = OMP_GET_WTIME ()
+
+!$acc data &
+!$acc create  (PSLHDA_, PSLHDD0_, POROGL_, POROGM_, PVCRSSA9F_, PNHXT9_, PVCRS0_, PVCW0F_, PWDLW0F_, PRDLR0_,  &
+!$acc          PRDLR9_, PNHXT0_, PRES0_, PRDELP0_, PCTY0_, PUVH0_, PATND_, PDBBC_, PRDPHI_, PGWT0_, PGWT9_,    &
+!$acc          PGFL_, PGMV_, PGMVS_, PB1_, PB2_, PGMVT1_, PGMVT1S_, PGWS_, PGMVTNDSI_, PWRL95_, KSETTLOFF_)    &
+!$acc present (YRVFE, YRLDDH, YRSTA, YRVAB, YRPARAR, YRVETA, YRGEM, YRPHY, YGFL, YRMDDH, YRDYN, YRDIMV, YRDIM, &
+!$acc          YDGMV_ALL(1), YDGSGEOM_, YDOROG_)
+
+#define cpi(x) CALL CPRS (x##_ALL, x##_, .TRUE.)
+
+cpi (PSLHDA); cpi (PSLHDD0); cpi (POROGL); cpi (POROGM); cpi (PVCRSSA9F); cpi (PNHXT9); 
+cpi (PVCRS0); cpi (PVCW0F); cpi (PWDLW0F); cpi (PRDLR0); cpi (PRDLR9); cpi (PNHXT0); 
+cpi (PRES0); cpi (PRDELP0); cpi (PCTY0); cpi (PUVH0); cpi (PATND); cpi (PDBBC); 
+cpi (PRDPHI); cpi (PGWT0); cpi (PGFL); cpi (PGMV); cpi (PGMVS); cpi (PB1); cpi (PB2); 
+cpi (PGMVT1); cpi (PGMVT1S); cpi (PGWS); cpi (PGMVTNDSI); 
+
+#undef cpi
+
+    TSC = OMP_GET_WTIME ()
+
+    JIDIA = 1
+    JFDIA = KLON*ICOUNT
+
+    CALL LACDYN(YRVFE,YRLDDH,YRSTA,YRVAB,YRPARAR,YRVETA,YRGEM,YRPHY,YGFL,&
+     & YRMDDH,YRDYN,YRDIMV,YRDIM,KLON*ICOUNT,YDGMV_ALL(1),JIDIA,JFDIA,PBETADT,PDT,&
+     & PSLHDA_, PSLHDD0_, YDGSGEOM_, YDOROG_, POROGL_, &
+     & POROGM_, PVCRSSA9F_, PNHXT9_, &
+     & PVCRS0_, PVCW0F_, PWDLW0F_, &
+     & PRDLR0_, PRDLR9_, PNHXT0_, &
+     & PRES0_, PRDELP0_, PCTY0_, PUVH0_, &
+     & PATND_, PDBBC_, PRDPHI_, PGWT0_, &
+     & PGWT9_, PGFL_, &
+     & KSETTLOFF_, PGMV_, PGMVS_, PB1_, &
+     & PB2_, PGMVT1_, PGMVT1S_, PGWS_, &
+     & PGMVTNDSI_, PWRL95_)
 
     TEC = OMP_GET_WTIME ()
+
+#define cpo(x) CALL CPRS (x##_ALL, x##_, .FALSE.)
+
+cpo (PGMV ); cpo (PGMVS ); cpo (PB1 ); cpo (PB2 ); cpo (PGMVT1 );
+cpo (PGMVT1S ); cpo (PGWS ); cpo (PGMVTNDSI); cpo (PWRL95 ); cpo (KSETTLOFF);
+
+#undef cpo
 
 !$acc end data
 
@@ -317,6 +448,10 @@ ENDDO
 
 PRINT *, " ZTD = ", ZTD, ZTD / REAL (ICOUNT1 * KLON, JPRB)
 PRINT *, " ZTC = ", ZTC, ZTC / REAL (ICOUNT1 * KLON, JPRB)
+
+
+ENDIF
+
 
 LLPRINT = .TRUE.
 
@@ -457,5 +592,310 @@ IF (IBL == ICOUNT) THEN
 ENDIF
 
 END SUBROUTINE
+
+SUBROUTINE CPRS3 (X3, X3_, LDH2D)
+
+REAL (KIND=JPRB) :: X3 (:,:,:,:), X3_ (:,:,:)
+LOGICAL :: LDH2D
+
+INTEGER :: JLON, JBLK, NLON, NBLK, I, NI, J, NJ
+
+NLON = SIZE (X3, 1)
+NI   = SIZE (X3, 2)
+NJ   = SIZE (X3, 3)
+NBLK = SIZE (X3, 4)
+
+IF (LDH2D) THEN
+!$acc parallel loop present (X3_) copyin (X3) collapse (4)
+DO JBLK = 1, NBLK
+  DO I = 1, NI
+  DO J = 1, NJ
+    DO JLON = 1, NLON
+      X3_ ((JBLK-1)*NLON+JLON,I,J) = X3 (JLON, I, J, JBLK)
+    ENDDO
+  ENDDO
+  ENDDO
+ENDDO
+!$acc end parallel loop
+ELSE
+!$acc parallel loop present (X3_) copyout (X3) collapse (4)
+DO JBLK = 1, NBLK
+  DO I = 1, NI
+  DO J = 1, NJ
+    DO JLON = 1, NLON
+      X3 (JLON, I, J, JBLK) = X3_ ((JBLK-1)*NLON+JLON,I,J) 
+    ENDDO
+  ENDDO
+  ENDDO
+ENDDO
+!$acc end parallel loop
+ENDIF
+
+END SUBROUTINE
+
+SUBROUTINE CPRS2 (X2, X2_, LDH2D)
+
+REAL (KIND=JPRB) :: X2 (:,:,:), X2_ (:,:)
+LOGICAL :: LDH2D
+
+INTEGER :: JLON, JBLK, NLON, NBLK, I, NI
+
+NLON = SIZE (X2, 1)
+NI   = SIZE (X2, 2)
+NBLK = SIZE (X2, 3)
+
+IF (LDH2D) THEN
+!$acc parallel loop present (X2_) copyin (X2) collapse (3)
+DO JBLK = 1, NBLK
+  DO I = 1, NI
+    DO JLON = 1, NLON
+      X2_ ((JBLK-1)*NLON+JLON,I) = X2 (JLON, I, JBLK)
+    ENDDO
+  ENDDO
+ENDDO
+!$acc end parallel loop
+ELSE
+!$acc parallel loop present (X2_) copyout (X2) collapse (3)
+DO JBLK = 1, NBLK
+  DO I = 1, NI
+    DO JLON = 1, NLON
+      X2 (JLON, I, JBLK) = X2_ ((JBLK-1)*NLON+JLON,I) 
+    ENDDO
+  ENDDO
+ENDDO
+!$acc end parallel loop
+ENDIF
+
+END SUBROUTINE
+
+SUBROUTINE CPRSI1 (X1, X1_, LDH2D)
+
+INTEGER (KIND=JPIM) :: X1 (:,:), X1_ (:)
+LOGICAL :: LDH2D
+
+INTEGER :: JLON, JBLK, NLON, NBLK
+
+NLON = SIZE (X1, 1)
+NBLK = SIZE (X1, 2)
+
+IF (LDH2D) THEN
+!$acc parallel loop present (X1_) copyin (X1) collapse (2)
+DO JBLK = 1, NBLK
+  DO JLON = 1, NLON
+    X1_ ((JBLK-1)*NLON+JLON) = X1 (JLON, JBLK)
+  ENDDO
+ENDDO
+!$acc end parallel loop
+ELSE
+!$acc parallel loop present (X1_) copyout (X1) collapse (2)
+DO JBLK = 1, NBLK
+  DO JLON = 1, NLON
+    X1 (JLON, JBLK) = X1_ ((JBLK-1)*NLON+JLON) 
+  ENDDO
+ENDDO
+!$acc end parallel loop
+ENDIF
+
+END SUBROUTINE
+
+SUBROUTINE CPRS1 (X1, X1_, LDH2D)
+
+REAL (KIND=JPRB) :: X1 (:,:), X1_ (:)
+LOGICAL :: LDH2D
+
+INTEGER :: JLON, JBLK, NLON, NBLK
+
+NLON = SIZE (X1, 1)
+NBLK = SIZE (X1, 2)
+
+IF (LDH2D) THEN
+!$acc parallel loop present (X1_) copyin (X1) collapse (2)
+DO JBLK = 1, NBLK
+  DO JLON = 1, NLON
+    X1_ ((JBLK-1)*NLON+JLON) = X1 (JLON, JBLK)
+  ENDDO
+ENDDO
+!$acc end parallel loop
+ELSE
+!$acc parallel loop present (X1_) copyout (X1) collapse (2)
+DO JBLK = 1, NBLK
+  DO JLON = 1, NLON
+    X1 (JLON, JBLK) = X1_ ((JBLK-1)*NLON+JLON) 
+  ENDDO
+ENDDO
+!$acc end parallel loop
+ENDIF
+
+END SUBROUTINE
+
+SUBROUTINE CPRS_TOROG (X1, X1_, LDH2D)
+
+TYPE (TOROG) :: X1 (:), X1_
+LOGICAL :: LDH2D
+
+INTEGER :: JLON, JBLK, NLON, NBLK
+
+NBLK = SIZE (X1, 1)
+NLON = SIZE (X1(1)%OROG, 1)
+
+IF (LDH2D) THEN
+DO JBLK = 1, NBLK
+!$acc parallel loop present (X1_%OROG) copyin (X1 (JBLK)%OROG) 
+  DO JLON = 1, SIZE (X1(JBLK)%OROG, 1)
+    X1_%OROG ((JBLK-1)*NLON+JLON) = X1 (JBLK)%OROG (JLON)
+  ENDDO
+!$acc end parallel loop
+ENDDO
+ELSE
+DO JBLK = 1, NBLK
+  !$acc parallel loop present (X1_%OROG) copyout (X1% (JBLK)%OROG) 
+  DO JLON = 1, SIZE (X1(JBLK)%OROG, 1)
+    X1 (JBLK)%OROG (JLON) = X1_%OROG ((JBLK-1)*NLON+JLON) 
+  ENDDO
+  !$acc end parallel loop
+ENDDO
+ENDIF
+
+END SUBROUTINE
+
+SUBROUTINE CPRS_GSGEOM (X1, X1_, LDH2D)
+
+TYPE (TGSGEOM) :: X1 (:), X1_
+LOGICAL :: LDH2D
+
+INTEGER :: JLON, JBLK, NLON, NBLK
+
+NBLK = SIZE (X1, 1)
+NLON = SIZE (X1(1)%RCORI, 1)
+
+IF (LDH2D) THEN
+DO JBLK = 1, NBLK
+!$acc parallel loop &
+!$acc present (X1_%RCORI X1_%RCORIC, X1_%GEMU, X1_%GSQM2, X1_%GELAM, X1_%GELAT, X1_%GECLO,      &
+!$acc          X1_%GESLO, X1_%GM, X1_%GMAPPA, X1_%GOMVRL, X1_%GOMVRM, X1_%GNORDL, X1_%GNORDM,   &
+!$acc          X1_%GNORDLCL, GNORDMCL, X1_%GNORDMCM, X1_%GAW, X1_%NGPLAT, X1_%NUNIQUEGP)        &
+!$acc copyin  (X1 (JBLK)%RCORI, X1 (JBLK)%RCORIC, X1 (JBLK)%GEMU, X1 (JBLK)%GSQM2, X1 (JBLK)%GELAM, &
+!$acc          X1 (JBLK)%GELAT, X1 (JBLK)%GECLO, X1 (JBLK)%GESLO, X1 (JBLK)%GM, X1 (JBLK)%GMAPPA,   &
+!$acc          X1 (JBLK)%GOMVRL, X1 (JBLK)%GOMVRM, X1 (JBLK)%GNORDL, X1 (JBLK)%GNORDM,              &
+!$acc          X1 (JBLK)%GNORDLCL, GNORDMCL, X1 (JBLK)%GNORDMCM, X1 (JBLK)%GAW, X1 (JBLK)%NGPLAT,   &
+!$acc          X1 (JBLK)%NUNIQUEGP)  
+  DO JLON = 1, SIZE (X1(JBLK)%RCORI, 1)
+    IF (ASSOCIATED (X1_%RCORI    )) X1_%RCORI       ((JBLK-1)*NLON+JLON) = X1 (JBLK)%RCORI     (JLON)
+    IF (ASSOCIATED (X1_%RCORIC   )) X1_%RCORIC      ((JBLK-1)*NLON+JLON) = X1 (JBLK)%RCORIC    (JLON)
+    IF (ASSOCIATED (X1_%GEMU     )) X1_%GEMU        ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GEMU      (JLON)
+    IF (ASSOCIATED (X1_%GSQM2    )) X1_%GSQM2       ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GSQM2     (JLON)
+    IF (ASSOCIATED (X1_%GELAM    )) X1_%GELAM       ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GELAM     (JLON)
+    IF (ASSOCIATED (X1_%GELAT    )) X1_%GELAT       ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GELAT     (JLON)
+    IF (ASSOCIATED (X1_%GECLO    )) X1_%GECLO       ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GECLO     (JLON)
+    IF (ASSOCIATED (X1_%GESLO    )) X1_%GESLO       ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GESLO     (JLON)
+    IF (ASSOCIATED (X1_%GM       )) X1_%GM          ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GM        (JLON)
+    IF (ASSOCIATED (X1_%GMAPPA   )) X1_%GMAPPA      ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GMAPPA    (JLON)
+    IF (ASSOCIATED (X1_%GOMVRL   )) X1_%GOMVRL      ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GOMVRL    (JLON)
+    IF (ASSOCIATED (X1_%GOMVRM   )) X1_%GOMVRM      ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GOMVRM    (JLON)
+    IF (ASSOCIATED (X1_%GNORDL   )) X1_%GNORDL      ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GNORDL    (JLON)
+    IF (ASSOCIATED (X1_%GNORDM   )) X1_%GNORDM      ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GNORDM    (JLON)
+    IF (ASSOCIATED (X1_%GNORDLCL )) X1_%GNORDLCL    ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GNORDLCL  (JLON)
+    IF (ASSOCIATED (X1_%GNORDMCL )) X1_%GNORDMCL    ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GNORDMCL  (JLON)
+    IF (ASSOCIATED (X1_%GNORDMCM )) X1_%GNORDMCM    ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GNORDMCM  (JLON)
+    IF (ASSOCIATED (X1_%GAW      )) X1_%GAW         ((JBLK-1)*NLON+JLON) = X1 (JBLK)%GAW       (JLON)
+    IF (ASSOCIATED (X1_%NGPLAT   )) X1_%NGPLAT      ((JBLK-1)*NLON+JLON) = X1 (JBLK)%NGPLAT    (JLON)
+    IF (ASSOCIATED (X1_%NUNIQUEGP)) X1_%NUNIQUEGP   ((JBLK-1)*NLON+JLON) = X1 (JBLK)%NUNIQUEGP (JLON)
+  ENDDO
+!$acc end parallel loop
+ENDDO
+ELSE
+DO JBLK = 1, NBLK
+!$acc parallel loop copyin (X1 (JBLK)%OROG) &
+!$acc present (X1_%RCORI X1_%RCORIC, X1_%GEMU, X1_%GSQM2, X1_%GELAM, X1_%GELAT, X1_%GECLO,      &
+!$acc          X1_%GESLO, X1_%GM, X1_%GMAPPA, X1_%GOMVRL, X1_%GOMVRM, X1_%GNORDL, X1_%GNORDM,   &
+!$acc          X1_%GNORDLCL, GNORDMCL, X1_%GNORDMCM, X1_%GAW, X1_%NGPLAT, X1_%NUNIQUEGP)        &
+!$acc copyout (X1 (JBLK)%RCORI, X1 (JBLK)%RCORIC, X1 (JBLK)%GEMU, X1 (JBLK)%GSQM2, X1 (JBLK)%GELAM, &
+!$acc          X1 (JBLK)%GELAT, X1 (JBLK)%GECLO, X1 (JBLK)%GESLO, X1 (JBLK)%GM, X1 (JBLK)%GMAPPA,   &
+!$acc          X1 (JBLK)%GOMVRL, X1 (JBLK)%GOMVRM, X1 (JBLK)%GNORDL, X1 (JBLK)%GNORDM,              &
+!$acc          X1 (JBLK)%GNORDLCL, GNORDMCL, X1 (JBLK)%GNORDMCM, X1 (JBLK)%GAW, X1 (JBLK)%NGPLAT,   &
+!$acc          X1 (JBLK)%NUNIQUEGP)  
+  DO JLON = 1, SIZE (X1(JBLK)%RCORI, 1)
+    IF (ASSOCIATED (X1_%RCORI    )) X1 (JBLK)%RCORI     (JLON) = X1_%RCORI       ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%RCORIC   )) X1 (JBLK)%RCORIC    (JLON) = X1_%RCORIC      ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GEMU     )) X1 (JBLK)%GEMU      (JLON) = X1_%GEMU        ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GSQM2    )) X1 (JBLK)%GSQM2     (JLON) = X1_%GSQM2       ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GELAM    )) X1 (JBLK)%GELAM     (JLON) = X1_%GELAM       ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GELAT    )) X1 (JBLK)%GELAT     (JLON) = X1_%GELAT       ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GECLO    )) X1 (JBLK)%GECLO     (JLON) = X1_%GECLO       ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GESLO    )) X1 (JBLK)%GESLO     (JLON) = X1_%GESLO       ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GM       )) X1 (JBLK)%GM        (JLON) = X1_%GM          ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GMAPPA   )) X1 (JBLK)%GMAPPA    (JLON) = X1_%GMAPPA      ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GOMVRL   )) X1 (JBLK)%GOMVRL    (JLON) = X1_%GOMVRL      ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GOMVRM   )) X1 (JBLK)%GOMVRM    (JLON) = X1_%GOMVRM      ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GNORDL   )) X1 (JBLK)%GNORDL    (JLON) = X1_%GNORDL      ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GNORDM   )) X1 (JBLK)%GNORDM    (JLON) = X1_%GNORDM      ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GNORDLCL )) X1 (JBLK)%GNORDLCL  (JLON) = X1_%GNORDLCL    ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GNORDMCL )) X1 (JBLK)%GNORDMCL  (JLON) = X1_%GNORDMCL    ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GNORDMCM )) X1 (JBLK)%GNORDMCM  (JLON) = X1_%GNORDMCM    ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%GAW      )) X1 (JBLK)%GAW       (JLON) = X1_%GAW         ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%NGPLAT   )) X1 (JBLK)%NGPLAT    (JLON) = X1_%NGPLAT      ((JBLK-1)*NLON+JLON) 
+    IF (ASSOCIATED (X1_%NUNIQUEGP)) X1 (JBLK)%NUNIQUEGP (JLON) = X1_%NUNIQUEGP   ((JBLK-1)*NLON+JLON) 
+  ENDDO
+!$acc end parallel loop
+ENDDO
+ENDIF
+
+END SUBROUTINE
+
+SUBROUTINE REALOX1 (X1, X1_)
+REAL (KIND=JPRB), POINTER :: X1 (:,:), X1_ (:)
+ALLOCATE (X1_ (SIZE (X1, 1) * SIZE (X1, 2)))
+END SUBROUTINE
+
+SUBROUTINE REALOI1 (I1, I1_)
+INTEGER (KIND=JPIM), POINTER :: I1 (:,:), I1_ (:)
+ALLOCATE (I1_ (SIZE (I1, 1) * SIZE (I1, 2)))
+END SUBROUTINE
+
+SUBROUTINE REALOX2 (X2, X2_)
+REAL (KIND=JPRB), POINTER :: X2 (:,:,:), X2_ (:,:)
+ALLOCATE (X2_ (SIZE (X2, 1) * SIZE (X2, 3), SIZE (X2, 2)))
+END SUBROUTINE
+
+SUBROUTINE REALOX3 (X3, X3_)
+REAL (KIND=JPRB), POINTER :: X3 (:,:,:,:), X3_ (:,:,:)
+ALLOCATE (X3_ (SIZE (X3, 1) * SIZE (X3, 4), SIZE (X3, 2), SIZE (X3, 3)))
+END SUBROUTINE
+
+SUBROUTINE REALO_TOROG (X1, X1_)
+
+TYPE (TOROG) :: X1 (:), X1_
+
+ALLOCATE (X1_%OROG (SIZE (X1) * SIZE (X1(1)%OROG)))
+
+END SUBROUTINE
+
+SUBROUTINE REALO_GSGEOM (X1, X1_)
+
+TYPE (TGSGEOM) :: X1 (:), X1_
+
+IF (ASSOCIATED (X1 (1)%RCORI    )) ALLOCATE (X1_%RCORI       (SIZE (X1) * SIZE (X1 (1)%RCORI     )))
+IF (ASSOCIATED (X1 (1)%RCORIC   )) ALLOCATE (X1_%RCORIC      (SIZE (X1) * SIZE (X1 (1)%RCORIC    )))
+IF (ASSOCIATED (X1 (1)%GEMU     )) ALLOCATE (X1_%GEMU        (SIZE (X1) * SIZE (X1 (1)%GEMU      )))
+IF (ASSOCIATED (X1 (1)%GSQM2    )) ALLOCATE (X1_%GSQM2       (SIZE (X1) * SIZE (X1 (1)%GSQM2     )))
+IF (ASSOCIATED (X1 (1)%GELAM    )) ALLOCATE (X1_%GELAM       (SIZE (X1) * SIZE (X1 (1)%GELAM     )))
+IF (ASSOCIATED (X1 (1)%GELAT    )) ALLOCATE (X1_%GELAT       (SIZE (X1) * SIZE (X1 (1)%GELAT     )))
+IF (ASSOCIATED (X1 (1)%GECLO    )) ALLOCATE (X1_%GECLO       (SIZE (X1) * SIZE (X1 (1)%GECLO     )))
+IF (ASSOCIATED (X1 (1)%GESLO    )) ALLOCATE (X1_%GESLO       (SIZE (X1) * SIZE (X1 (1)%GESLO     )))
+IF (ASSOCIATED (X1 (1)%GM       )) ALLOCATE (X1_%GM          (SIZE (X1) * SIZE (X1 (1)%GM        )))
+IF (ASSOCIATED (X1 (1)%GMAPPA   )) ALLOCATE (X1_%GMAPPA      (SIZE (X1) * SIZE (X1 (1)%GMAPPA    )))
+IF (ASSOCIATED (X1 (1)%GOMVRL   )) ALLOCATE (X1_%GOMVRL      (SIZE (X1) * SIZE (X1 (1)%GOMVRL    )))
+IF (ASSOCIATED (X1 (1)%GOMVRM   )) ALLOCATE (X1_%GOMVRM      (SIZE (X1) * SIZE (X1 (1)%GOMVRM    )))
+IF (ASSOCIATED (X1 (1)%GNORDL   )) ALLOCATE (X1_%GNORDL      (SIZE (X1) * SIZE (X1 (1)%GNORDL    )))
+IF (ASSOCIATED (X1 (1)%GNORDM   )) ALLOCATE (X1_%GNORDM      (SIZE (X1) * SIZE (X1 (1)%GNORDM    )))
+IF (ASSOCIATED (X1 (1)%GNORDLCL )) ALLOCATE (X1_%GNORDLCL    (SIZE (X1) * SIZE (X1 (1)%GNORDLCL  )))
+IF (ASSOCIATED (X1 (1)%GNORDMCL )) ALLOCATE (X1_%GNORDMCL    (SIZE (X1) * SIZE (X1 (1)%GNORDMCL  )))
+IF (ASSOCIATED (X1 (1)%GNORDMCM )) ALLOCATE (X1_%GNORDMCM    (SIZE (X1) * SIZE (X1 (1)%GNORDMCM  )))
+IF (ASSOCIATED (X1 (1)%GAW      )) ALLOCATE (X1_%GAW         (SIZE (X1) * SIZE (X1 (1)%GAW       )))
+IF (ASSOCIATED (X1 (1)%NGPLAT   )) ALLOCATE (X1_%NGPLAT      (SIZE (X1) * SIZE (X1 (1)%NGPLAT    )))
+IF (ASSOCIATED (X1 (1)%NUNIQUEGP)) ALLOCATE (X1_%NUNIQUEGP   (SIZE (X1) * SIZE (X1 (1)%NUNIQUEGP )))
+
+END SUBROUTINE
+
 
 END 
