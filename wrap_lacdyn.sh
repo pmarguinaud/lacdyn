@@ -18,7 +18,8 @@ hostname
 ./scripts/compile.pl --update --compile --bin wrap_lacdyn.x --arch cpu
 ./scripts/compile.pl --update --compile --bin wrap_lacdyn.x --arch gpu
 
- ./compile.cpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100 --single-block > diff.txt
+#./compile.cpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100 --single-block > diff.txt
+ ./compile.cpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100 --single-block --fix-arrays > diff.txt
 
 set +e
 diff diff.ref.txt diff.txt
