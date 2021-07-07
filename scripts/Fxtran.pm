@@ -20,6 +20,49 @@ sub xpath_by_type
   return '*[substring(name(),string-length(name())-'.$size.')="-'.$type.'"]';
 }
 
+sub getIndent
+{
+  # get statement indentation
+
+  my $stmt = shift;
+
+  my $n = $stmt->previousSibling;
+
+  unless ($n)
+    {
+      if ($stmt->parentNode)
+        {
+          return &getIndent ($stmt->parentNode);
+        }
+      return 0;
+    }
+
+
+  if (($n->nodeName eq '#text') && ($n->data =~ m/\n/o))
+    {
+      (my $t = $n->data) =~ s/^.*\n//o;
+      return length ($t);
+    }
+
+  return 0;
+}
+
+sub reIndent
+{
+  my ($node, $ns) = @_;
+
+  my $sp = ' ' x $ns;
+
+  my @cr = &f ('.//text ()[contains (.,"' . "\n" . '")]', $node);
+
+  for my $cr (@cr)
+    {
+      (my $t = $cr->data) =~ s/\n/\n$sp/g;
+      $cr->setData ($t);
+    }
+
+}
+
 sub _offset
 {
   my ($node, $pfound) = @_;

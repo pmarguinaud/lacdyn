@@ -352,6 +352,7 @@ sub addDataDirectives
   
     }
 
+  &addDataDirectivesNonJlonVariables ($d);
 }
 
 sub exchangeJlonJlevLoops
@@ -407,6 +408,36 @@ sub mergeKernels
         }
   
   
+  
+    }
+}
+
+sub addDataDirectivesNonJlonVariables
+{
+  my $d = shift;
+  
+  my %done;
+  
+  for my $en (&f ('.//f:EN-N/f:N/f:n/text ()', $d, 1))
+    {
+      next unless (my $sslt = &getShapeSpecList ($en, $d));
+  
+      my @ss = &f ('./f:shape-spec', $sslt, 1);    
+  
+      next if (($ss[0] eq 'KLON') or ($ss[0] eq ':'));
+  
+      my @stmt = &f ('.//f:a-stmt[f:E-1/f:named-E/f:N/f:n/text ()="?"]', $en, $d);
+  
+      for my $stmt (@stmt)
+        {
+          my ($do) = &f ('ancestor::f:do-construct', $stmt);
+          next if ($do && &f ('./f:do-stmt/f:do-V[string (.)="JLON"]', $do));
+          my $x = $do || $stmt;
+          my $sp = &Fxtran::getIndent ($x);
+          next if ($done{$en}{$x->unique_key}++);
+          $x->parentNode->insertAfter (&n ("<C>!\$acc update device ($en)</C>"), $x);
+          $x->parentNode->insertAfter (&t ("\n" . (' ' x $sp)), $x);
+        }
   
     }
 }

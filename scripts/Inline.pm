@@ -142,49 +142,6 @@ sub removeStmt
     }
 }
 
-sub getIndent
-{
-  # get statement indentation
-
-  my $stmt = shift;
-
-  my $n = $stmt->previousSibling;
-
-  unless ($n)
-    {
-      if ($stmt->parentNode)
-        {
-          return &getIndent ($stmt->parentNode);
-        }
-      return 0;
-    }
-
-
-  if (($n->nodeName eq '#text') && ($n->data =~ m/\n/o))
-    {
-      (my $t = $n->data) =~ s/^.*\n//o;
-      return length ($t);
-    }
-
-  return 0;
-}
-
-sub reIndent
-{
-  my ($node, $ns) = @_;
-
-  my $sp = ' ' x $ns;
-
-  my @cr = &f ('.//text ()[contains (.,"' . "\n" . '")]', $node);
-
-  for my $cr (@cr)
-    {
-      (my $t = $cr->data) =~ s/\n/\n$sp/g;
-      $cr->setData ($t);
-    }
-
-}
-
 sub inlineContainedSubroutine
 {
   my ($d1, $n2) = @_;
@@ -263,7 +220,7 @@ sub inlineContainedSubroutine
   
       # Get indentation level of CALL statement
 
-      my $ci = &getIndent ($call);
+      my $ci = &Fxtran::getIndent ($call);
   
       # Insert statements from inlined routine + a few comments
   
@@ -273,9 +230,9 @@ sub inlineContainedSubroutine
   
       for my $node (reverse @node)
         {
-          my $si = &getIndent ($node);
+          my $si = &Fxtran::getIndent ($node);
           my $di = $ci - $si; $di = $di > 0 ? $di : 0;
-          &reIndent ($node, $di);
+          &Fxtran::reIndent ($node, $di);
           $call->parentNode->insertAfter ($node, $call);
           $call->parentNode->insertAfter (&t (' ' x $di), $call);
         }

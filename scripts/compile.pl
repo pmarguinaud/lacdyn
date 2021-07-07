@@ -61,8 +61,6 @@ sub preProcessIfNewer
       my $d = &Fxtran::fxtran (location => $f1);
       &saveToFile ($d, "tmp/$f2");
 
-=pod
-
       &Inline::inlineContainedSubroutines ($d);
       &saveToFile ($d, "tmp/inlineContainedSubroutines/$f2");
 
@@ -84,8 +82,8 @@ sub preProcessIfNewer
         {
           if ($opts{'single-block'})
             {
-#             &SingleBlock::hoistJlonLoops ($d);
-#             &SingleBlock::addParallelLoopDirectives ($d);
+              &SingleBlock::hoistJlonLoops ($d);
+              &SingleBlock::addParallelLoopDirectives ($d);
             }
           else
             {
@@ -94,11 +92,10 @@ sub preProcessIfNewer
         }
 
 
-#     &Blocks::addDataDirectives ($d);
-#     &saveToFile ($d, "tmp/addDirectives/$f2");
-#
+      &Blocks::addDataDirectives ($d);
 
-=cut
+      &saveToFile ($d, "tmp/addDirectives/$f2");
+ 
 
       'FileHandle'->new (">$f2")->print ($d->textContent ());
 
@@ -108,6 +105,8 @@ sub preProcessIfNewer
 
 my @opts_f = qw (update compile kernels single-block);
 my @opts_s = qw (arch bin);
+
+$opts{'single-block'} = 1;
 
 &GetOptions
 (
