@@ -14,21 +14,19 @@ cd /gpfswork/rech/jau/ufh62jk/lacdyn/openacc-kernels
 
 hostname
 
+for arch in cpu gpu
+do
 
-./scripts/compile.pl --update --compile --bin wrap_lacdyn.x --arch cpu
-./scripts/compile.pl --update --compile --bin wrap_lacdyn.x --arch gpu
+./scripts/compile.pl --update --compile --bin wrap_lacdyn.x --arch $arch
 
-#./compile.cpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100 --single-block > diff.txt
- ./compile.cpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100 --single-block --fix-arrays > diff.txt
+./compile.$arch/wrap_lacdyn.x --case t0031 --diff --heapsize 100 --single-block --fix-arrays > diff.$arch.txt
 
 set +e
-diff diff.ref.txt diff.txt
+diff diff.ref.txt diff.$arch.txt
 set -e
 
+done
 
-
-
- ./compile.gpu/wrap_lacdyn.x --case t0031 --diff --heapsize 100 --single-block --fix-arrays
 
 # nsys profile -f true -o lacdyn.qdrep ./wrap_lacdyn.x --case t1198 --heapsize 100 # --diff --diff-block-list 1 
 # nvprof  --print-gpu-trace ./wrap_lacdyn.x --case t1198 --heapsize 100 --diff 
