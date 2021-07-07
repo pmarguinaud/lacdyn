@@ -16,7 +16,8 @@ hostname
 
 ./scripts/compile.pl --update --compile --bin wrap_lacdyn.x --arch gpu > compile.gpu.eo 2>&1
 
- nvprof --print-gpu-trace ./compile.gpu/wrap_lacdyn.x --case t1198 --heapsize 100 --single-block --fix-arrays 
+ ./compile.gpu/wrap_lacdyn.x --case t1198 --heapsize 100 --single-block --fix-arrays --diff
+#nvprof --print-gpu-trace ./compile.gpu/wrap_lacdyn.x --case t1198 --heapsize 100 --single-block --fix-arrays 
 
 # nsys profile -f true -o lacdyn.qdrep ./wrap_lacdyn.x --case t1198 --heapsize 100 # --diff --diff-block-list 1 
 # nvprof  --print-gpu-trace ./wrap_lacdyn.x --case t1198 --heapsize 100 --diff 
